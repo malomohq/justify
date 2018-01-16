@@ -125,6 +125,106 @@ defmodule Justify.ValidationsetTest do
     end
   end
 
+  describe "validate_length/3 with string" do
+    test "add length error when value length must match required length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, is: 1)
+      assert validationset.errors == [{ :foo, { "should be %{count} character(s)", count: 1, kind: :is, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "add length error when value length is over the maximum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, max: 1)
+      assert validationset.errors == [{ :foo, { "should be at most %{count} character(s)", count: 1, kind: :max, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "add length error when value length is less than the minimum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, min: 4)
+      assert validationset.errors == [{ :foo, { "should be at least %{count} character(s)", count: 4, kind: :min, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "validate when value length matches required length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, is: 3)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length is under the maximum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, max: 4)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length equals the maximum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, max: 3)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length is above the minimum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, min: 1)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length equals the minimum length" do
+      validationset = validationset(%{ foo: "bar" }) |> validate_length(:foo, min: 3)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+  end
+
+  describe "validate_length/3 with list" do
+    test "add length error when value length must match required length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, is: 2)
+      assert validationset.errors == [{ :foo, { "should have %{count} item(s)", count: 2, kind: :is, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "add length error when value length is over the maximum length" do
+      validationset = validationset(%{ foo: ["bar", "bar"] }) |> validate_length(:foo, max: 1)
+      assert validationset.errors == [{ :foo, { "should have at most %{count} item(s)", count: 1, kind: :max, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "add length error when value length is less than the minimum length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, min: 2)
+      assert validationset.errors == [{ :foo, { "should have at least %{count} item(s)", count: 2, kind: :min, validation: :length } }]
+      refute validationset.valid?
+    end
+
+    test "validate when value length matches required length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, is: 1)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length is under the maximum length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, max: 2)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length equals the maximum length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, max: 1)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length is above the minimum length" do
+      validationset = validationset(%{ foo: ["bar", "bar"] }) |> validate_length(:foo, min: 1)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+
+    test "validate when value length equals the minimum length" do
+      validationset = validationset(%{ foo: ["bar"] }) |> validate_length(:foo, min: 1)
+      assert validationset.errors == []
+      assert validationset.valid?
+    end
+  end
+
   describe "validate_required/3" do
     test "add required error when value does not exist" do
       validationset = validationset(%{}) |> validate_required(:foo)
