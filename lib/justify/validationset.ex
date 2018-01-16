@@ -32,13 +32,6 @@ defmodule Justify.Validationset do
 
   ## Options
   * `:message` - the message on failure, defaults to "must be accepted"
-
-  ## Examples
-
-  ```
-  validate_acceptance(validationset, :terms_of_service)
-  validate_acceptance(validationset, :terms_of_service, message: "please accept the terms of service")
-  ```
   """
   @spec validate_acceptance(t, atom, Keyword.t) :: t
   def validate_acceptance(%__MODULE__{ data: data } = validationset, field, opts \\ []) do
@@ -104,12 +97,6 @@ defmodule Justify.Validationset do
   ## Options
 
   * `:message` - the message on failure, defaults to "is reserved"
-
-  ## Examples
-
-  ```
-   validate_exclusion(validationset, :name, ~w(admin superadmin))
-  ```
   """
   @spec validate_exclusion(t, atom, Enum.t, Keyword.t) :: t
   def validate_exclusion(%__MODULE__{ data: data } = validationset, field, enum, opts \\ []) do
@@ -131,12 +118,6 @@ defmodule Justify.Validationset do
   ## Options
 
   * `:message` - the message on failure, defaults to "has invalid format"
-
-  ## Examples
-
-  ```
-  validate_format(validationset, :email, ~r/@/)
-  ```
   """
   @spec validate_format(t, atom, Regex.t, Keyword.t) :: t
   def validate_format(%__MODULE__{ data: data } = validationset, field, format, opts \\ []) do
@@ -156,13 +137,6 @@ defmodule Justify.Validationset do
   ## Options
 
   * `:message` - the message on failure, defaults to "is invalid"
-
-  ## Examples
-
-  ```
-  validate_inclusion(validationset, :gender, ["man", "woman", "other", "prefer not to say"])
-  validate_inclusion(validationset, :age, 0..99)
-  ```
   """
   @spec validate_inclusion(t, atom, Enum.t, Keyword.t) :: t
   def validate_inclusion(%__MODULE__{ data: data } = validationset, field, enum, opts \\ []) do
@@ -176,6 +150,27 @@ defmodule Justify.Validationset do
     end
   end
 
+  @doc """
+  Validates a field's value is a string or list of the given length.
+
+  ## Options
+
+  * `:is` - the length must be exactly this value
+  * `:min` - the length must be greater than or equal to this value
+  * `:max` - the length must be less than or equal to this value
+  * `:count` - what length to count for string, `:graphemes` (default) or
+               `:codepoints`
+  * `:message` - the message on failure, depending on the value type, is one of
+    * for strings
+      * “should be %{count} character(s)”
+      * “should be at least %{count} character(s)”
+      * “should be at most %{count} character(s)”
+    * for lists
+      * “should have %{count} item(s)”
+      * “should have at least %{count} item(s)”
+      * “should have at most %{count} item(s)”
+  """
+  @spec validate_length(t, atom, Keyword.t) :: t
   def validate_length(%__MODULE__{ data: data } = validationset, field, opts) do
     count = opts[:count] || :graphemes
     value = data[field]
@@ -244,9 +239,6 @@ defmodule Justify.Validationset do
   defp get_length_message(:list, :min, supplied_message),
     do: supplied_message || "should have at least %{count} item(s)"
 
-  defp validate_number(validationset = %__MODULE__{} = validationset) do
-  end
-
   @doc """
   Validates that one or more fields are present in the validationset.
 
@@ -259,12 +251,6 @@ defmodule Justify.Validationset do
   ## Options
 
   * `:message` - the message on failure, defaults to "can't be blank"
-
-  ## Examples
-
-  ```
-  validate_required(validationset, :foo)
-  validate_required(validationset, [:foo, :bar])
   """
   @spec validate_required(t, list | atom, Keyword.t) :: t
   def validate_required(%__MODULE__{} = validationset, fields, opts \\ []) do
