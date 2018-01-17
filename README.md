@@ -1,11 +1,13 @@
 # Justify
 
-**TODO: Add description**
+Provides a simple solution for validating maps and structs. No schemas. Just
+functions.
+
+## Inspired By
+
+* [Ecto.Changeset](https://hexdocs.pm/ecto/Ecto.Changeset.html#module-validations-and-constraints)
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `justify` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +17,9 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/justify](https://hexdocs.pm/justify).
+## Usage
 
+```elixir
+%Justify.Validationset{ data: %{ name: "Anthony Smith" } }
+|> Justify.Validationset.validate_required()
+```
