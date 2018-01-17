@@ -21,5 +21,5 @@ end
 
 ```elixir
 %Justify.Validationset{ data: %{ name: "Anthony Smith" } }
-|> Justify.Validationset.validate_required()
+|> Justify.Validationset.validate_required(:name)
 ```
