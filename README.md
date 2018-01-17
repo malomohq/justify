@@ -20,7 +20,28 @@ end
 
 ## Usage
 
+### Checking for validity
+
 ```elixir
-%Justify.Validationset{ data: %{ name: "Anthony Smith" } }
-|> Justify.Validationset.validate_required(:name)
+validationset = %{name: nil} |> validate_required(:name)
+
+validationset.valid? # => false
 ```
+
+### Retrieving errors
+
+```elixir
+validationset = %{name: nil} |> validate_required(:name)
+
+validationset.errors # => [name: {"can't be blank", validation: :required}]
+```
+
+## Supported Validations
+
+* `validate_acceptance/3`
+* `validate_confirmation/3`
+* `validate_exclusion/4`
+* `validate_format/4`
+* `validate_inclusion/4`
+* `validate_length/3`
+* `validate_required/3`
