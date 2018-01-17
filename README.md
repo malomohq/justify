@@ -1,11 +1,12 @@
 # Justify
 
-Provides a simple solution for validating maps and structs. No schemas. Just
+Simple data validation for Elixir maps and structs. No schemas. Just
 functions.
 
 ## Inspired By
 
 * [Ecto.Changeset](https://hexdocs.pm/ecto/Ecto.Changeset.html#module-validations-and-constraints)
+* [Vex](https://github.com/CargoSense/vex)
 
 ## Installation
 
