@@ -17,10 +17,6 @@ defmodule Justify.Validationset do
 
   An additional keyword list can be passed to provide additional contextual
   information for the error.
-
-  If the validationset already has an error for the provided `field` a new
-  error will not be added. To add an error for an already existing field please
-  see `put_error/4`.
   """
   @spec add_error(t, atom, String.t, Keyword.t) :: t
   def add_error(%__MODULE__{ errors: errors } = validationset, field, message, keys \\ []) do
