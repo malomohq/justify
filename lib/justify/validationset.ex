@@ -42,7 +42,7 @@ defmodule Justify.Validationset do
   end
 
   @doc """
-  Validates that the given field matches the confirmation valueeter of that
+  Validates that the given field matches the confirmation value of that
   field.
 
   By default, the field will be checked against a field with the same name
@@ -76,11 +76,9 @@ defmodule Justify.Validationset do
     end
   end
 
-  defp field_is_confirmed(value, confirmation_value, true),
-    do: value == confirmation_value
   defp field_is_confirmed(_value, nil, false),
     do: true
-  defp field_is_confirmed(value, confirmation_value, false),
+  defp field_is_confirmed(value, confirmation_value, _required),
     do: value == confirmation_value
 
 
