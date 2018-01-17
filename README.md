@@ -1,7 +1,6 @@
 # Justify
 
-Simple data validation for Elixir maps and structs. No schemas. Just
-functions.
+Simple data validation for Elixir. No schemas. Just functions.
 
 ## Inspired By
 
@@ -23,17 +22,17 @@ end
 ### Checking for validity
 
 ```elixir
-validationset = %{name: nil} |> validate_required(:name)
+dataset = %{name: nil} |> validate_required(:name)
 
-validationset.valid? # => false
+dataset.valid? # => false
 ```
 
 ### Retrieving errors
 
 ```elixir
-validationset = %{name: nil} |> validate_required(:name)
+dataset = %{name: nil} |> validate_required(:name)
 
-validationset.errors # => [name: {"can't be blank", validation: :required}]
+dataset.errors # => [name: {"can't be blank", validation: :required}]
 ```
 
 ## Supported Validations

@@ -1,13 +1,13 @@
 defmodule Justify do
   @doc """
-  Adds an error to the validationset.
+  Adds an error to the dataset.
 
   An additional keyword list can be passed to provide additional contextual
   information for the error.
   """
   @spec add_error(Justify.Dataset.t, atom, String.t, Keyword.t) :: Justify.Dataset.t
-  def add_error(%Justify.Dataset{ errors: errors } = validationset, field, message, keys \\ []) do
-    %{ validationset | errors: [{ field, { message, keys } } | errors], valid?: false }
+  def add_error(%Justify.Dataset{ errors: errors } = dataset, field, message, keys \\ []) do
+    %{ dataset | errors: [{ field, { message, keys } } | errors], valid?: false }
   end
 
   @doc """
@@ -18,14 +18,14 @@ defmodule Justify do
   """
   @spec validate_acceptance(Justify.Dataset.t | map | struct, atom, Keyword.t) :: Justify.Dataset.t
   def validate_acceptance(data, field, opts \\ [])
-  def validate_acceptance(%Justify.Dataset{ data: data } = validationset, field, opts) do
+  def validate_acceptance(%Justify.Dataset{ data: data } = dataset, field, opts) do
     value   = data[field]
     message = opts[:message] || "must be accepted"
 
     if (value != true) do
-      add_error(validationset, field, message, validation: :acceptance)
+      add_error(dataset, field, message, validation: :acceptance)
     else
-      validationset
+      dataset
     end
   end
   def validate_acceptance(data, field, opts) when is_map(data),
@@ -54,7 +54,7 @@ defmodule Justify do
   """
   @spec validate_confirmation(Justify.Dataset.t | map | struct, atom, Keyword.t) :: Justify.Dataset.t
   def validate_confirmation(data, field, opts \\ [])
-  def validate_confirmation(%Justify.Dataset{ data: data } = validationset, field, opts) do
+  def validate_confirmation(%Justify.Dataset{ data: data } = dataset, field, opts) do
     confirmation_field = opts[:confirmation_field] || get_confirmation_field(field)
     message            = opts[:message] || "does not match"
 
@@ -62,9 +62,9 @@ defmodule Justify do
     confirmation_value = data[confirmation_field]
 
     if (!field_is_confirmed(value, confirmation_value, opts[:required] || false)) do
-      add_error(validationset, field, message, validation: :confirmation)
+      add_error(dataset, field, message, validation: :confirmation)
     else
-      validationset
+      dataset
     end
   end
   def validate_confirmation(data, field, opts) when is_map(data),
@@ -88,14 +88,14 @@ defmodule Justify do
   """
   @spec validate_exclusion(Justify.Dataset.t | map | struct, atom, Enum.t, Keyword.t) :: Justify.Dataset.t
   def validate_exclusion(data, field, enum, opts \\ [])
-  def validate_exclusion(%Justify.Dataset{ data: data } = validationset, field, enum, opts) do
+  def validate_exclusion(%Justify.Dataset{ data: data } = dataset, field, enum, opts) do
     message = opts[:message] || "is reserved"
     value   = data[field]
 
     if value in enum do
-      add_error(validationset, field, message, validation: :exclusion)
+      add_error(dataset, field, message, validation: :exclusion)
     else
-      validationset
+      dataset
     end
   end
   def validate_exclusion(data, field, enum, opts) when is_map(data),
@@ -112,14 +112,14 @@ defmodule Justify do
   """
   @spec validate_format(Justify.Dataset.t | map | struct, atom, Regex.t, Keyword.t) :: Justify.Dataset.t
   def validate_format(data, field, format, opts \\ [])
-  def validate_format(%Justify.Dataset{ data: data } = validationset, field, format, opts) do
+  def validate_format(%Justify.Dataset{ data: data } = dataset, field, format, opts) do
     message = opts[:message] || "has invalid format"
     value   = data[field]
 
     if !is_binary(value) || !(value =~ format) do
-      add_error(validationset, field, message, validation: :format)
+      add_error(dataset, field, message, validation: :format)
     else
-      validationset
+      dataset
     end
   end
   def validate_format(data, field, format, opts) when is_map(data),
@@ -134,14 +134,14 @@ defmodule Justify do
   """
   @spec validate_inclusion(Justify.Dataset.t | map | struct, atom, Enum.t, Keyword.t) :: Justify.Dataset.t
   def validate_inclusion(data, field, enum, opts \\ [])
-  def validate_inclusion(%Justify.Dataset{ data: data } = validationset, field, enum, opts) do
+  def validate_inclusion(%Justify.Dataset{ data: data } = dataset, field, enum, opts) do
     message = opts[:message] || "is invalid"
     value   = data[field]
 
     if !(value in enum) do
-      add_error(validationset, field, message, validation: :inclusion)
+      add_error(dataset, field, message, validation: :inclusion)
     else
-      validationset
+      dataset
     end
   end
   def validate_inclusion(data, field, enum, opts) when is_map(data),
@@ -168,7 +168,7 @@ defmodule Justify do
       * “should have at most %{count} item(s)”
   """
   @spec validate_length(Justify.Dataset.t | map | struct, atom, Keyword.t) :: Justify.Dataset.t
-  def validate_length(%Justify.Dataset{ data: data } = validationset, field, opts) do
+  def validate_length(%Justify.Dataset{ data: data } = dataset, field, opts) do
     count = opts[:count] || :graphemes
     value = data[field]
 
@@ -182,7 +182,7 @@ defmodule Justify do
           { :list, length(value) }
       end
 
-    validationset
+    dataset
     |> check_is_length(field, value_type, length, opts)
     |> check_max_length(field, value_type, length, opts)
     |> check_min_length(field, value_type, length, opts)
@@ -190,36 +190,36 @@ defmodule Justify do
   def validate_length(data, field, opts) when is_map(data),
     do: validate_length(Justify.Dataset.new(data), field, opts)
 
-  defp check_is_length(validationset, field, value_type, length, opts) do
+  defp check_is_length(dataset, field, value_type, length, opts) do
     message = get_length_message(value_type, :is, opts[:message])
     is      = opts[:is]
 
     if (is && is != length) do
-      add_error(validationset, field, message, count: is, kind: :is, validation: :length)
+      add_error(dataset, field, message, count: is, kind: :is, validation: :length)
     else
-      validationset
+      dataset
     end
   end
 
-  defp check_max_length(validationset, field, value_type, length, opts) do
+  defp check_max_length(dataset, field, value_type, length, opts) do
     message = get_length_message(value_type, :max, opts[:message])
     max     = opts[:max]
 
     if (max && max < length) do
-      add_error(validationset, field, message, count: max, kind: :max, validation: :length)
+      add_error(dataset, field, message, count: max, kind: :max, validation: :length)
     else
-      validationset
+      dataset
     end
   end
 
-  defp check_min_length(validationset, field, value_type, length, opts) do
+  defp check_min_length(dataset, field, value_type, length, opts) do
     message = get_length_message(value_type, :min, opts[:message])
     min     = opts[:min]
 
     if (min && min > length) do
-      add_error(validationset, field, message, count: min, kind: :min, validation: :length)
+      add_error(dataset, field, message, count: min, kind: :min, validation: :length)
     else
-      validationset
+      dataset
     end
   end
 
@@ -239,12 +239,12 @@ defmodule Justify do
     do: supplied_message || "should have at least %{count} item(s)"
 
   @doc """
-  Validates that one or more fields are present in the validationset.
+  Validates that one or more fields are present in the dataset.
 
   If the value of a field is `nil` or a string made only of whitespace, the
-  validationset is marked as invalid.
+  dataset is marked as invalid.
 
-  If a field does not exist within the validationset, the validationset is
+  If a field does not exist within the dataset, the dataset is
   marked as invalid.
 
   ## Options
@@ -253,29 +253,29 @@ defmodule Justify do
   """
   @spec validate_required(Justify.Dataset.t | map | struct, list | atom, Keyword.t) :: Justify.Dataset.t
   def validate_required(data, fields, opts \\ [])
-  def validate_required(%Justify.Dataset{} = validationset, fields, opts) do
+  def validate_required(%Justify.Dataset{} = dataset, fields, opts) do
     fields  = List.wrap(fields)
     message = opts[:message] || "can't be blank"
 
-    validate_field_is_required(validationset, fields, message)
+    validate_field_is_required(dataset, fields, message)
   end
   def validate_required(data, fields, opts) when is_map(data),
     do: validate_required(Justify.Dataset.new(data), fields, opts)
 
 
-  defp validate_field_is_required(%Justify.Dataset{ data: data } = validationset, [field | t], message) do
+  defp validate_field_is_required(%Justify.Dataset{ data: data } = dataset, [field | t], message) do
     value = data[field]
 
-    validationset =
+    dataset =
       if (is_nil(value) || String.trim(value) == "") do
-        add_error(validationset, field, message, validation: :required)
+        add_error(dataset, field, message, validation: :required)
       else
-        validationset
+        dataset
       end
 
-    validate_field_is_required(validationset, t, message)
+    validate_field_is_required(dataset, t, message)
   end
-  defp validate_field_is_required(validationset, _fields, _message) do
-    validationset
+  defp validate_field_is_required(dataset, _fields, _message) do
+    dataset
   end
 end
