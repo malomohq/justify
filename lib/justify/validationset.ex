@@ -24,13 +24,14 @@ defmodule Justify.Validationset do
   end
 
   @doc """
-  Validates the given valueeter is `true`.
+  Validates the given field is `true`.
 
   ## Options
   * `:message` - the message on failure, defaults to "must be accepted"
   """
-  @spec validate_acceptance(t, atom, Keyword.t) :: t
-  def validate_acceptance(%__MODULE__{ data: data } = validationset, field, opts \\ []) do
+  @spec validate_acceptance(t | map | struct, atom, Keyword.t) :: t
+  def validate_acceptance(data, field, opts \\ [])
+  def validate_acceptance(%__MODULE__{ data: data } = validationset, field, opts) do
     value   = data[field]
     message = opts[:message] || "must be accepted"
 
@@ -40,9 +41,11 @@ defmodule Justify.Validationset do
       validationset
     end
   end
+  def validate_acceptance(data, field, opts) when is_map(data),
+    do: validate_acceptance(%__MODULE__{ data: data }, field, opts)
 
   @doc """
-  Validates that the given field matches the confirmation value of that
+  Validates that the given field matches the confirmation value for that
   field.
 
   By default, the field will be checked against a field with the same name
@@ -59,10 +62,12 @@ defmodule Justify.Validationset do
 
   * `:confirmation_field` - the field to check against
   * `:message` - the message on failure, defaults to "does not match"
-  * `:required` - sets whether existence of a confirmation valueeter is
+  * `:required` - sets whether existence of a confirmation field is
                   required
   """
-  def validate_confirmation(%__MODULE__{ data: data } = validationset, field, opts \\ []) do
+  @spec validate_confirmation(t | map | struct, atom, Keyword.t) :: t
+  def validate_confirmation(data, field, opts \\ [])
+  def validate_confirmation(%__MODULE__{ data: data } = validationset, field, opts) do
     confirmation_field = opts[:confirmation_field] || get_confirmation_field(field)
     message            = opts[:message] || "does not match"
 
@@ -75,6 +80,8 @@ defmodule Justify.Validationset do
       validationset
     end
   end
+  def validate_confirmation(data, field, opts) when is_map(data),
+    do: validate_confirmation(%__MODULE__{ data: data }, field, opts)
 
   defp field_is_confirmed(_value, nil, false),
     do: true
@@ -92,8 +99,9 @@ defmodule Justify.Validationset do
 
   * `:message` - the message on failure, defaults to "is reserved"
   """
-  @spec validate_exclusion(t, atom, Enum.t, Keyword.t) :: t
-  def validate_exclusion(%__MODULE__{ data: data } = validationset, field, enum, opts \\ []) do
+  @spec validate_exclusion(t | map | struct, atom, Enum.t, Keyword.t) :: t
+  def validate_exclusion(data, field, enum, opts \\ [])
+  def validate_exclusion(%__MODULE__{ data: data } = validationset, field, enum, opts) do
     message = opts[:message] || "is reserved"
     value   = data[field]
 
@@ -103,6 +111,8 @@ defmodule Justify.Validationset do
       validationset
     end
   end
+  def validate_exclusion(data, field, enum, opts) when is_map(data),
+    do: validate_exclusion(%__MODULE__{ data: data }, field, enum, opts)
 
   @doc """
   Validates that a field's value is of the given format.
@@ -113,8 +123,9 @@ defmodule Justify.Validationset do
 
   * `:message` - the message on failure, defaults to "has invalid format"
   """
-  @spec validate_format(t, atom, Regex.t, Keyword.t) :: t
-  def validate_format(%__MODULE__{ data: data } = validationset, field, format, opts \\ []) do
+  @spec validate_format(t | map | struct, atom, Regex.t, Keyword.t) :: t
+  def validate_format(data, field, format, opts \\ [])
+  def validate_format(%__MODULE__{ data: data } = validationset, field, format, opts) do
     message = opts[:message] || "has invalid format"
     value   = data[field]
 
@@ -124,6 +135,8 @@ defmodule Justify.Validationset do
       validationset
     end
   end
+  def validate_format(data, field, format, opts) when is_map(data),
+    do: validate_format(%__MODULE__{ data: data }, field, format, opts)
 
   @doc """
   Validates a field's value is included in the given enumerable.
@@ -132,8 +145,9 @@ defmodule Justify.Validationset do
 
   * `:message` - the message on failure, defaults to "is invalid"
   """
-  @spec validate_inclusion(t, atom, Enum.t, Keyword.t) :: t
-  def validate_inclusion(%__MODULE__{ data: data } = validationset, field, enum, opts \\ []) do
+  @spec validate_inclusion(t | map | struct, atom, Enum.t, Keyword.t) :: t
+  def validate_inclusion(data, field, enum, opts \\ [])
+  def validate_inclusion(%__MODULE__{ data: data } = validationset, field, enum, opts) do
     message = opts[:message] || "is invalid"
     value   = data[field]
 
@@ -143,6 +157,8 @@ defmodule Justify.Validationset do
       validationset
     end
   end
+  def validate_inclusion(data, field, enum, opts) when is_map(data),
+    do: validate_inclusion(%__MODULE__{ data: data }, field, enum, opts)
 
   @doc """
   Validates a field's value is a string or list of the given length.
@@ -164,7 +180,7 @@ defmodule Justify.Validationset do
       * “should have at least %{count} item(s)”
       * “should have at most %{count} item(s)”
   """
-  @spec validate_length(t, atom, Keyword.t) :: t
+  @spec validate_length(t | map | struct, atom, Keyword.t) :: t
   def validate_length(%__MODULE__{ data: data } = validationset, field, opts) do
     count = opts[:count] || :graphemes
     value = data[field]
@@ -184,6 +200,8 @@ defmodule Justify.Validationset do
     |> check_max_length(field, value_type, length, opts)
     |> check_min_length(field, value_type, length, opts)
   end
+  def validate_length(data, field, opts) when is_map(data),
+    do: validate_length(%__MODULE__{ data: data }, field, opts)
 
   defp check_is_length(validationset, field, value_type, length, opts) do
     message = get_length_message(value_type, :is, opts[:message])
@@ -246,13 +264,17 @@ defmodule Justify.Validationset do
 
   * `:message` - the message on failure, defaults to "can't be blank"
   """
-  @spec validate_required(t, list | atom, Keyword.t) :: t
-  def validate_required(%__MODULE__{} = validationset, fields, opts \\ []) do
+  @spec validate_required(t | map | struct, list | atom, Keyword.t) :: t
+  def validate_required(data, fields, opts \\ [])
+  def validate_required(%__MODULE__{} = validationset, fields, opts) do
     fields  = List.wrap(fields)
     message = opts[:message] || "can't be blank"
 
     validate_field_is_required(validationset, fields, message)
   end
+  def validate_required(data, fields, opts) when is_map(data),
+    do: validate_required(%__MODULE__{ data: data }, fields, opts)
+
 
   defp validate_field_is_required(%__MODULE__{ data: data } = validationset, [field | t], message) do
     value = data[field]
