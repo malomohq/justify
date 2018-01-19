@@ -144,6 +144,24 @@ defmodule Justify.JustifyTest do
       refute dataset.valid?
     end
 
+    test "add length error when value is an empty list" do
+      dataset = dataset(%{ foo: [] }) |> validate_length(:foo, is: 1)
+      assert dataset.errors == [{ :foo, { "should have %{count} item(s)", count: 1, kind: :is, validation: :length } }]
+      refute dataset.valid?
+    end
+
+    test "validate when value is `nil`" do
+      dataset = dataset(%{ foo: nil }) |> validate_length(:foo, is: 1)
+      assert dataset.errors == []
+      assert dataset.valid?
+    end
+
+    test "validate when value is empty string" do
+      dataset = dataset(%{ foo: "" }) |> validate_length(:foo, is: 1)
+      assert dataset.errors == []
+      assert dataset.valid?
+    end
+
     test "validate when value length matches required length" do
       dataset = dataset(%{ foo: "bar" }) |> validate_length(:foo, is: 3)
       assert dataset.errors == []

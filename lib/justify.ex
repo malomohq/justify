@@ -150,6 +150,10 @@ defmodule Justify do
   @doc """
   Validates a field's value is a string or list of the given length.
 
+  If a binary's length is 0 an error will not be added. `nil` values are
+  considered to have a length of 0. If you need to check for empty strings or
+  `nil` values use `validate_required/3`.
+
   ## Options
 
   * `:is` - the length must be exactly this value
@@ -170,7 +174,7 @@ defmodule Justify do
   @spec validate_length(Justify.Dataset.t | map | struct, atom, Keyword.t) :: Justify.Dataset.t
   def validate_length(%Justify.Dataset{ data: data } = dataset, field, opts) do
     count = opts[:count] || :graphemes
-    value = Map.get(data, field)
+    value = Map.get(data, field) || ""
 
     { value_type, length } =
       case count do
@@ -182,13 +186,19 @@ defmodule Justify do
           { :list, length(value) }
       end
 
+    check_length(dataset, field, value_type, length, opts)
+  end
+  def validate_length(data, field, opts) when is_map(data),
+    do: validate_length(Justify.Dataset.new(data), field, opts)
+
+  defp check_length(dataset, _field, :string, 0, _opts),
+    do: dataset
+  defp check_length(dataset, field, value_type, length, opts) do
     dataset
     |> check_is_length(field, value_type, length, opts)
     |> check_max_length(field, value_type, length, opts)
     |> check_min_length(field, value_type, length, opts)
   end
-  def validate_length(data, field, opts) when is_map(data),
-    do: validate_length(Justify.Dataset.new(data), field, opts)
 
   defp check_is_length(dataset, field, value_type, length, opts) do
     message = get_length_message(value_type, :is, opts[:message])
