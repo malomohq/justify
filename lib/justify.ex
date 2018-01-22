@@ -7,7 +7,7 @@ defmodule Justify do
   """
   @spec add_error(Justify.Dataset.t, atom, String.t, Keyword.t) :: Justify.Dataset.t
   def add_error(%Justify.Dataset{ errors: errors } = dataset, field, message, keys \\ []) do
-    %{ dataset | errors: [{ field, { message, keys } } | errors], valid?: false }
+    %{ dataset | errors: errors ++ [{ field, { message, keys } }], valid?: false }
   end
 
   @doc """
