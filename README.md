@@ -44,3 +44,4 @@ dataset.errors # => [name: {"can't be blank", validation: :required}]
 * `validate_inclusion/4`
 * `validate_length/3`
 * `validate_required/3`
+* `validate_map/4`
