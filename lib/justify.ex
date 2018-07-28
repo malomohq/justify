@@ -303,7 +303,8 @@ defmodule Justify do
   Use `validate_required/3` to check for a field's presence.
 
   `validator` is a function that validates a map using other validation
-  functions. It must return a dataset.
+  functions. It must return a dataset. If no `validator` is given, the function
+  merely checks if the field's value is a map.
 
   ## Example
 
