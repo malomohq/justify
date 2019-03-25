@@ -275,6 +275,78 @@ defmodule Justify.JustifyTest do
     end
   end
 
+  describe "validate_map/4" do
+    test "add map error when value is not a map" do
+      errors = [{ :foo, { "is not a map", validation: :map } }]
+
+      dataset = dataset(%{ foo: "bar" }) |> validate_map(:foo)
+      assert dataset.errors == errors
+      refute dataset.valid?
+
+      dataset = dataset(%{ foo: [] }) |> validate_map(:foo)
+      assert dataset.errors == errors
+      refute dataset.valid?
+
+      dataset = dataset(%{ foo: true }) |> validate_map(:foo)
+      assert dataset.errors == errors
+      refute dataset.valid?
+
+      dataset = dataset(%{ foo: 123 }) |> validate_map(:foo)
+      assert dataset.errors == errors
+      refute dataset.valid?
+    end
+
+    test "do not add map error when value is nil" do
+      dataset = dataset(%{ foo: nil }) |> validate_map(:foo)
+      assert dataset.errors == []
+      assert dataset.valid?
+    end
+
+    test "validate when value is a map" do
+      dataset = dataset(%{ foo: %{} }) |> validate_map(:foo)
+      assert dataset.errors == []
+      assert dataset.valid?
+    end
+
+    test "add nested errors when custom validator fails" do
+      validate_foo = fn foo ->
+        validate_required(foo, [:bar])
+      end
+
+      dataset = dataset(%{ foo: %{ bar: nil } }) |> validate_map(:foo, validate_foo)
+      assert dataset.errors == [{ :foo, [{ :bar, { "can't be blank", validation: :required } }] }]
+      refute dataset.valid?
+    end
+
+    test "add nested errors recursively" do
+      validate_bar = fn bar ->
+        validate_required(bar, [:baz])
+      end
+
+      validate_foo = fn foo ->
+        validate_map(foo, :bar, validate_bar)
+      end
+
+      dataset = dataset(%{ foo: %{ bar: %{ baz: nil } } }) |> validate_map(:foo, validate_foo)
+      assert dataset.errors == [{ :foo, [{ :bar, [{ :baz, { "can't be blank", validation: :required } }] }] }]
+      refute dataset.valid?
+    end
+
+    test "validate nested maps recursively" do
+      validate_bar = fn bar ->
+        validate_required(bar, [:baz])
+      end
+
+      validate_foo = fn foo ->
+        validate_map(foo, :bar, validate_bar)
+      end
+
+      dataset = dataset(%{ foo: %{ bar: %{ baz: "quux" } } }) |> validate_map(:foo, validate_foo)
+      assert dataset.errors == []
+      assert dataset.valid?
+    end
+  end
+
   #
   # private
   #

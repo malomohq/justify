@@ -11,6 +11,13 @@ defmodule Justify do
   end
 
   @doc """
+  Adds errors to the dataset.
+  """
+  def add_errors(%Justify.Dataset{ errors: errors } = dataset, field, nested_errors) do
+    %{ dataset | errors: errors ++ [{ field, nested_errors }], valid?: false }
+  end
+
+  @doc """
   Validates the given field is `true`.
 
   ## Options
@@ -288,4 +295,52 @@ defmodule Justify do
   defp validate_field_is_required(dataset, _fields, _message) do
     dataset
   end
+
+  @doc """
+  Validates a field's value is a map and validate it with `validator`.
+
+  If the value of the field is `nil`, the dataset will not be marked as invalid.
+  Use `validate_required/3` to check for a field's presence.
+
+  `validator` is a function that validates a map using other validation
+  functions. It must return a dataset. If no `validator` is given, the function
+  merely checks if the field's value is a map.
+
+  ## Example
+
+      validate_foo = fn foo ->
+        foo
+        |> validate_required(:bar)
+        |> validate_length(:bar, is: 3)
+      end
+
+      validate_map(%{foo: %{bar: "baz"}}, :foo, validate_foo)
+
+  ## Options
+
+  * `:message` - the message on failure, defaults to "is not a map"
+  """
+  @spec validate_map(Justify.Dataset.t | map | struct, atom, (map -> Justify.Dataset.t), Keyword.t) :: Justify.Dataset.t
+  def validate_map(dataset, field, validator \\ &%Justify.Dataset{ data: &1 }, opts \\ [])
+  def validate_map(%Justify.Dataset{ data: data } = dataset, field, validator, opts) do
+    value = Map.get(data, field)
+    message = opts[:message] || "is not a map"
+
+    cond do
+      is_nil(value) ->
+        dataset
+
+      is_map(value) ->
+        case validator.(value) do
+          %{errors: []} -> dataset
+          %{errors: [_|_] = errors} -> add_errors(dataset, field, errors)
+        end
+
+      true ->
+        add_error(dataset, field, message, validation: :map)
+    end
+  end
+
+  def validate_map(data, field, validator, opts) when is_map(data),
+    do: validate_map(Justify.Dataset.new(data), field, validator, opts)
 end
