@@ -1,5 +1,5 @@
 defmodule Justify.Dataset do
-  defstruct data: nil, errors: [], valid?: true
+  defstruct data: %{}, errors: [], valid?: true
 
   @type error :: { String.t(), Keyword.t() }
 
