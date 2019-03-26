@@ -10,5 +10,6 @@ defmodule Justify.Dataset do
              }
 
   @spec new(map) :: t
+  def new(%Justify.Dataset{} = dataset), do: dataset
   def new(data), do: %__MODULE__{ data: data }
 end
