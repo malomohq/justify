@@ -11,6 +11,11 @@ defmodule Justify do
     to: Justify.Validators.Acceptance,
     as: :call
 
+  @spec validate_confirmation(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_confirmation(dataset, field, opts \\ []),
+    to: Justify.Validators.Confirmation,
+    as: :call
+
   @doc """
   Applies a validator function to a field containing an embedded value.
 
@@ -32,6 +37,11 @@ defmodule Justify do
 
   @doc """
   Validates that one or more fields has a value.
+
+  ## Options
+
+  * `:message` - error message, defaults to "must be accepted"
+  * ':trim?' - remove whitespace before validating, defaults to `true`
   """
   @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_required(dataset, fields, opts \\ []),
