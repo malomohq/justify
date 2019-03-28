@@ -283,6 +283,48 @@ defmodule JustifyTest do
     end
   end
 
+  describe "validate_inclusion/4" do
+    test "adds an error if value is not contained within enum" do
+      field = :field
+
+      data = Map.new([{ field, "value" }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [{ ^field, { "is invalid", validation: :inclusion } }],
+               valid?: false
+             } = Justify.validate_inclusion(data, field, ["another value"])
+    end
+
+    test "does not add an error if the value is not contained within enum" do
+      field = :field
+
+      value = "value"
+
+      data = Map.new([{ field, value }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_inclusion(data, field, [value])
+    end
+
+    test "uses a custom error message when provided" do
+      field = :field
+
+      message = "message"
+
+      data = Map.new([{ field, "value" }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [{ ^field, { ^message, validation: :inclusion } }],
+               valid?: false
+             } = Justify.validate_inclusion(data, field, ["another value"], message: message)
+    end
+  end
+
   describe "validate_required/3" do
     test "adds an error if value is `nil`" do
       field = :field

@@ -77,6 +77,11 @@ defmodule Justify do
     to: Justify.Validators.Format,
     as: :call
 
+  @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_inclusion(dataset, field, enum, opts \\ []),
+    to: Justify.Validators.Inclusion,
+    as: :call
+
   @doc """
   Validates that one or more fields has a value.
 
