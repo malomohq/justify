@@ -1,11 +1,11 @@
 defmodule Justify.Dataset do
   defstruct data: %{}, errors: [], valid?: true
 
-  @type error :: { String.t(), Keyword.t() }
+  @type error_t :: { String.t(), Keyword.t() }
 
   @type t :: %__MODULE__{
                data: map,
-               errors: [{ atom, error }],
+               errors: [{ atom, error_t }],
                valid?: boolean
              }
 
