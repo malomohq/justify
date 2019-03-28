@@ -11,6 +11,20 @@ defmodule Justify do
     to: Justify.Validators.Acceptance,
     as: :call
 
+  @doc """
+  Applies a validator function to a field containing an embedded value.
+
+  An embedded value can be either a map or a list of maps.
+
+  ## Example
+
+      validator = fn(metadata) -> Justify.validate_required(metadata, :key) end
+
+      data = %{metadata: [%{value: "a value"}]}
+
+      validate_embed(data, :metadata, validator)
+      #> %Justify.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
+  """
   @spec validate_embed(Justify.Dataset.t(), atom, fun()) :: Justify.Dataset.t()
   defdelegate validate_embed(dataset, field, validator),
     to: Justify.Validators.Embed,
