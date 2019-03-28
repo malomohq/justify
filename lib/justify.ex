@@ -66,6 +66,18 @@ defmodule Justify do
     as: :call
 
   @doc """
+  Validates the value of the given field matches the provided format.
+
+  ## Options
+
+  * `:message` - error message, defaults to "has invalid format"
+  """
+  @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_format(dataset, field, format, opts \\ []),
+    to: Justify.Validators.Format,
+    as: :call
+
+  @doc """
   Validates that one or more fields has a value.
 
   ## Options
