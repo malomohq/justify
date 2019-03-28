@@ -53,6 +53,19 @@ defmodule Justify do
     as: :call
 
   @doc """
+  Validates the value of the given field is not contained within the provided
+  enumerable.
+
+  ## Options
+
+  * `:message` - error message, defaults to "is reserved"
+  """
+  @spec validate_exclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_exclusion(dataset, field, enum, opts \\ []),
+    to: Justify.Validators.Exclusion,
+    as: :call
+
+  @doc """
   Validates that one or more fields has a value.
 
   ## Options
