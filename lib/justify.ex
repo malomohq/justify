@@ -11,6 +11,23 @@ defmodule Justify do
     to: Justify.Validators.Acceptance,
     as: :call
 
+  @doc """
+  Validates the value of a given field matches it's confirmation field.
+
+  By default, the field will be checked against a field with the same name
+  but appended with `_confirmation`. It’s possible to provide a custom field by
+  providing a value to the `:confirmation_field` option.
+
+  Note that if the confirmation field is `nil` or missing, by default, an error
+  will not be added. You can specify that the confirmation field is required in
+  the options (see below).
+
+  ## Options
+
+  * `:confirmation_field` - name of the field to validate against
+  * `:message` - error message, defaults to "does not match"
+  * `:required?` - whether the confirmation field must contain a value
+  """
   @spec validate_confirmation(map, atom, Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_confirmation(dataset, field, opts \\ []),
     to: Justify.Validators.Confirmation,
