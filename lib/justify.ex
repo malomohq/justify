@@ -6,7 +6,7 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "must be accepted"
   """
-  @spec validate_acceptance(Justify.Dataset.t(), atom, Keyword.t()) :: Justify.Dataset.t()
+  @spec validate_acceptance(map, atom, Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_acceptance(dataset, field, opts \\ []),
     to: Justify.Validators.Acceptance,
     as: :call
@@ -25,9 +25,17 @@ defmodule Justify do
       validate_embed(data, :metadata, validator)
       #> %Justify.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
   """
-  @spec validate_embed(Justify.Dataset.t(), atom, fun()) :: Justify.Dataset.t()
+  @spec validate_embed(map, atom, fun()) :: Justify.Dataset.t()
   defdelegate validate_embed(dataset, field, validator),
     to: Justify.Validators.Embed,
+    as: :call
+
+  @doc """
+  Validates that one or more fields has a value.
+  """
+  @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_required(dataset, fields, opts \\ []),
+    to: Justify.Validators.Required,
     as: :call
 
   @doc """
