@@ -11,7 +11,7 @@ defmodule Justify.Validators.Acceptance do
     message = Keyword.get(opts, :message, @default_message)
 
     case value do
-      true ->
+      _valid when value in [true, nil] ->
         dataset
       _otherwise ->
         Justify.add_error(dataset, field, message, validation: :acceptance)
