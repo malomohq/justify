@@ -1,4 +1,32 @@
 defmodule Justify do
+  @moduledoc """
+  Justify is a data validation library for Elixir.
+
+  The primary philosophy behind Justify is that it should be easy to validate
+  data without schemas or types. All of Justify's validation functions will
+  happily accept a plain ol' map.
+
+  ```elixir
+  iex> %{email: "madebyanthony"}
+  ...> |> Justify.validate_required(:email)
+  ...> |> Justify.validate_format(:email, ~r/\S+@\S+/)
+  %Justify.Dataset{errors: [email: {"has invalid format", validation: :format}], valid?: false}
+  ```
+
+  Pretty simple. Not much more to it than that.
+
+  ## Supported Validations
+
+  * [`validate_acceptance/3`](https://hexdocs.pm/justify/Justify.html#validate_acceptance/3)
+  * [`validate_confirmation/3`](https://hexdocs.pm/justify/Justify.html#validate_confirmation/3)
+  * [`validate_embed/3`](https://hexdocs.pm/justify/Justify.html#validate_embed/3)
+  * [`validate_exclusion/4`](https://hexdocs.pm/justify/Justify.html#validate_exclusion/4)
+  * [`validate_format/4`](https://hexdocs.pm/justify/Justify.html#validate_format/4)
+  * [`validate_inclusion/4`](https://hexdocs.pm/justify/Justify.html#validate_inclusion/4)
+  * [`validate_length/3`](https://hexdocs.pm/justify/Justify.html#validate_length/3)
+  * [`validate_required/3`](https://hexdocs.pm/justify/Justify.html#validate_required/3)
+  """
+
   @doc """
   Validates the given field has a value of `true`.
 
@@ -53,7 +81,7 @@ defmodule Justify do
     as: :call
 
   @doc """
-  Validates the value of the given field is not contained within the provided
+  Validates the value for the given field is not contained within the provided
   enumerable.
 
   ## Options
@@ -77,9 +105,47 @@ defmodule Justify do
     to: Justify.Validators.Format,
     as: :call
 
+  @doc """
+  Validates the value for the given field is contained within the provided
+  enumerable.
+
+  ## Options
+
+  * `:message` - error message, defaults to "is invalid"
+  """
   @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_inclusion(dataset, field, enum, opts \\ []),
     to: Justify.Validators.Inclusion,
+    as: :call
+
+  @doc """
+  Validates the length of a string or list.
+
+  ## Options
+
+  * `:count` - how to calculate the length of a string. Must be one of
+               `:codepoints`, `:graphemes` or `:bytes`. Defaults to
+               `:graphemes`.
+  * `:is` - the exact length match
+  * `:min` - match a length greater than or equal to
+  * `:max` - match a length less than or equal to
+  * `:message` - error message, defaults to one of the following variants:
+    * for strings
+      * “should be %{count} character(s)”
+      * “should be at least %{count} character(s)”
+      * “should be at most %{count} character(s)”
+    * for binary
+      * “should be %{count} byte(s)”
+      * “should be at least %{count} byte(s)”
+      * “should be at most %{count} byte(s)”
+    * for lists
+      * “should have %{count} item(s)”
+      * “should have at least %{count} item(s)”
+      * “should have at most %{count} item(s)”
+  """
+  @spec validate_length(map, atom, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_length(dataset, field, opts),
+    to: Justify.Validators.Length,
     as: :call
 
   @doc """
@@ -88,7 +154,7 @@ defmodule Justify do
   ## Options
 
   * `:message` - error message, defaults to "must be accepted"
-  * ':trim?' - remove whitespace before validating, defaults to `true`
+  * `:trim?` - remove whitespace before validating, defaults to `true`
   """
   @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_required(dataset, fields, opts \\ []),
