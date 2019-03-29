@@ -4,7 +4,7 @@ defmodule Justify.MixProject do
   def project do
     [
       app: :justify,
-      description: "Data validation for Elixir"
+      description: "Data validation for Elixir",
       version: "1.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
