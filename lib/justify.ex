@@ -47,7 +47,7 @@ defmodule Justify do
       validate_embed(data, :metadata, validator)
       #> %Justify.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
   """
-  @spec validate_embed(map, atom, fun()) :: Justify.Dataset.t()
+  @spec validate_embed(map, atom, fun) :: Justify.Dataset.t()
   defdelegate validate_embed(dataset, field, validator),
     to: Justify.Validators.Embed,
     as: :call
