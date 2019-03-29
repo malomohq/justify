@@ -1,13 +1,12 @@
-defmodule Justify.Mixfile do
+defmodule Justify.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :justify,
-      description: "Simple data validation for Elixir",
-      version: "0.2.0",
-      elixir: "~> 1.3",
-      start_permanent: Mix.env == :prod,
+      version: "1.0.0",
+      elixir: "~> 1.8",
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package()
     ]
@@ -15,13 +14,14 @@ defmodule Justify.Mixfile do
 
   def application do
     [
-      extra_applications: [ :logger ]
+      extra_applications: [:logger]
     ]
   end
 
   defp deps do
     [
-      { :ex_doc, "> 0.0.0", only: [ :dev ] }
+      { :dialyxir, "~> 1.0.0-rc", only: :dev, runtime: false },
+      { :ex_doc,   ">= 0.0.0",    only: :dev, runtime: false }
     ]
   end
 
