@@ -23,7 +23,12 @@ defmodule Justify.Validators.Embed do
   end
 
   defp validate([h | t], validator) do
-    [validate(h, validator)] ++ validate(t, validator)
+    case validate(h, validator) do
+      [] ->
+        []
+      error ->
+        [error]
+    end ++ validate(t, validator)
   end
 
   defp validate([], _validator) do
