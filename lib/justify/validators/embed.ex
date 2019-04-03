@@ -33,6 +33,6 @@ defmodule Justify.Validators.Embed do
   defp validate(value, validator) do
     value
     |> validator.()
-    |> Map.get(:errors)
+    |> Map.get(:errors, [])
   end
 end

@@ -178,6 +178,24 @@ defmodule JustifyTest do
              } = Justify.validate_embed(data, field, fun)
     end
 
+    test "does not add an error if the embedded value is valid" do
+      field = :field
+
+      embed_field = :embed_field
+
+      embed_data = Map.new([{ embed_field, true }])
+
+      data = Map.new([{ field, embed_data }])
+
+      fun = fn(value) -> value end
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_embed(data, field, fun)
+    end
+
     test "does not add an error if value is `nil`" do
       field = :field
 
