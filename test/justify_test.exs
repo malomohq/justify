@@ -257,6 +257,18 @@ defmodule JustifyTest do
                valid?: false
              } = Justify.validate_exclusion(data, field, [value], message: message)
     end
+
+    test "does not add an error if value is `nil`" do
+      field = :field
+
+      data = Map.new([{ field, nil }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_exclusion(data, field, ["a value"])
+    end
   end
 
   describe "validate_format/4" do
@@ -340,6 +352,18 @@ defmodule JustifyTest do
                errors: [{ ^field, { ^message, validation: :inclusion } }],
                valid?: false
              } = Justify.validate_inclusion(data, field, ["another value"], message: message)
+    end
+
+    test "does not add an error if value is `nil`" do
+      field = :field
+
+      data = Map.new([{ field, nil }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_inclusion(data, field, ["a value"])
     end
   end
 
