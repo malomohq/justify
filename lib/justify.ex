@@ -143,6 +143,11 @@ defmodule Justify do
       * “should have at least %{count} item(s)”
       * “should have at most %{count} item(s)”
   """
+  @spec validate_length(map, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_length(dataset, opts),
+    to: Justify.Validators.Length,
+    as: :call
+
   @spec validate_length(map, atom, Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_length(dataset, field, opts),
     to: Justify.Validators.Length,

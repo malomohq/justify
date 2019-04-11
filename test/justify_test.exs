@@ -213,6 +213,24 @@ defmodule JustifyTest do
                valid?: true
              } = Justify.validate_embed(data, field, fun)
     end
+
+    test "can validate embedded lists" do
+      data = %{key: ["123", "1"]}
+
+      assert %Justify.Dataset{
+               errors: [
+                 key: [
+                   [
+                     {"1", _}
+                   ]
+                 ]
+               ],
+               valid?: false
+             } =
+               Justify.validate_embed(data, :key, fn d ->
+                 Justify.validate_length(d, min: 2)
+               end)
+    end
   end
 
   describe "validate_exclusion/4" do

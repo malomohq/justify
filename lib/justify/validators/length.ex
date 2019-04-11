@@ -19,6 +19,8 @@ defmodule Justify.Validators.Length do
     }
   }
 
+  def call(dataset, opts), do: call(dataset, dataset, opts)
+
   def call(dataset, field, opts) do
     dataset = Justify.Dataset.new(dataset)
 
