@@ -736,9 +736,36 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :required } }],
+               errors: [{^field, {^message, validation: :required}}],
                valid?: false
              } = Justify.validate_required(data, field, message: message)
+    end
+  end
+
+  describe "validate_map/3" do
+    test "validates every key in a map" do
+      field = :name
+
+      data = %{
+        nested: %{
+          one: %{name: "Name"},
+          two: %{name: "N"}
+        }
+      }
+
+      assert %Justify.Dataset{
+               errors: [
+                 {:nested,
+                  [
+                    two: [{^field, _}]
+                  ]}
+               ],
+               valid?: false
+             } =
+               Justify.validate_map(data, :nested, fn v ->
+                 v
+                 |> Justify.validate_length(field, min: 2)
+               end)
     end
   end
 end
