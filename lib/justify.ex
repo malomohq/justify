@@ -100,6 +100,11 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "has invalid format"
   """
+  @spec validate_format(map, Regex.t(), Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_format(dataset, format),
+    to: Justify.Validators.Format,
+    as: :call
+
   @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_format(dataset, field, format, opts \\ []),
     to: Justify.Validators.Format,

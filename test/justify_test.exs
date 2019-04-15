@@ -329,6 +329,16 @@ defmodule JustifyTest do
                valid?: false
              } = Justify.validate_format(data, field, ~r/\d/, message: message)
     end
+
+    test "can validate a simple value" do
+      data = "message"
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [{^data, {_, validation: :format}}],
+               valid?: false
+             } = Justify.validate_format(data, ~r/\d/)
+    end
   end
 
   describe "validate_inclusion/4" do
