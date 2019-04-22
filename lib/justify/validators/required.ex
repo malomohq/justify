@@ -19,7 +19,7 @@ defmodule Justify.Validators.Required do
              value when value in [nil, ""] ->
                Justify.add_error(acc, field, message, validation: :required)
               _otherwise ->
-                dataset
+                acc
            end
     end)
   end
@@ -35,7 +35,7 @@ defmodule Justify.Validators.Required do
   defp maybe_trim_value(value, true) when is_binary(value) do
     String.trim(value)
   end
-  
+
   defp maybe_trim_value(value, _do_not_trim) do
     value
   end

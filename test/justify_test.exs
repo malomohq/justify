@@ -704,6 +704,21 @@ defmodule JustifyTest do
              } = Justify.validate_required(data, [field_a, field_b])
     end
 
+    test "adds an error for field regardless of placement in list" do
+      field_a = :field_a
+      field_b = :field_b
+
+      data = Map.new([{ field_a, "" }, { field_b, "hi" }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [
+                 { ^field_a, { "can't be blank", validation: :required } }
+                ],
+               valid?: false
+             } = Justify.validate_required(data, [field_a, field_b])
+    end
+
     test "does not add an error if value is not nil or only whitespace" do
       field = :field
 
