@@ -728,6 +728,18 @@ defmodule JustifyTest do
              } = Justify.validate_required(data, field, trim?: false)
     end
 
+    test "does not add an error if value is not a string" do
+      field = :field
+
+      data = Map.new([{ field, 1 }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_required(data, field)
+    end
+
     test "uses a custom error message when provided" do
       field = :field
       message = "message"

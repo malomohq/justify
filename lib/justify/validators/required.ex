@@ -28,7 +28,15 @@ defmodule Justify.Validators.Required do
   # private
   #
 
-  defp maybe_trim_value(nil, _does_not_matter), do: nil
-  defp maybe_trim_value(value, true), do: String.trim(value)
-  defp maybe_trim_value(value, _do_not_trim), do: value
+  defp maybe_trim_value(nil, _does_not_matter) do
+    nil
+  end
+
+  defp maybe_trim_value(value, true) when is_binary(value) do
+    String.trim(value)
+  end
+  
+  defp maybe_trim_value(value, _do_not_trim) do
+    value
+  end
 end
