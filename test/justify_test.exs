@@ -311,6 +311,20 @@ defmodule JustifyTest do
                valid?: false
              } = Justify.validate_format(data, field, ~r/\d/, message: message)
     end
+
+    test "do not add an error if value is nil" do
+      field = :field
+
+      value = nil
+
+      data = Map.new([{ field, value }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format(data, field, ~r/#{value}/)
+    end
   end
 
   describe "validate_inclusion/4" do
