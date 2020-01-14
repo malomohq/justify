@@ -223,11 +223,13 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, value }])
 
+      enum = [value]
+
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "is reserved", validation: :exclusion } }],
+               errors: [{ ^field, { "is reserved", validation: :exclusion, enum: ^enum } }],
                valid?: false
-             } = Justify.validate_exclusion(data, field, [value])
+             } = Justify.validate_exclusion(data, field, enum)
     end
 
     test "does not add an error if the value is not contained within enum" do
@@ -251,11 +253,13 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, value }])
 
+      enum = [value]
+
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :exclusion } }],
+               errors: [{ ^field, { ^message, validation: :exclusion, enum: ^enum } }],
                valid?: false
-             } = Justify.validate_exclusion(data, field, [value], message: message)
+             } = Justify.validate_exclusion(data, field, enum, message: message)
     end
 
     test "does not add an error if value is `nil`" do
@@ -347,11 +351,13 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, "value" }])
 
+      enum = ["another value"]
+
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "is invalid", validation: :inclusion } }],
+               errors: [{ ^field, { "is invalid", validation: :inclusion, enum: ^enum } }],
                valid?: false
-             } = Justify.validate_inclusion(data, field, ["another value"])
+             } = Justify.validate_inclusion(data, field, enum)
     end
 
     test "does not add an error if the value is not contained within enum" do
@@ -375,14 +381,16 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, "value" }])
 
+      enum = ["another value"]
+
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :inclusion } }],
+               errors: [{ ^field, { ^message, validation: :inclusion, enum: ^enum } }],
                valid?: false
-             } = Justify.validate_inclusion(data, field, ["another value"], message: message)
+             } = Justify.validate_inclusion(data, field, enum, message: message)
     end
 
-    test "does not add an error if value is `nil`" do
+    test "does not add an error if value is nil" do
       field = :field
 
       data = Map.new([{ field, nil }])

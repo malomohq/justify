@@ -11,7 +11,7 @@ defmodule Justify.Validators.Exclusion do
     message = Keyword.get(opts, :message, @default_message)
 
     if value in enum do
-      Justify.add_error(dataset, field, message, validation: :exclusion)
+      Justify.add_error(dataset, field, message, validation: :exclusion, enum: enum)
     else
       dataset
     end

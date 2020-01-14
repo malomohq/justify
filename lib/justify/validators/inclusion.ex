@@ -13,7 +13,7 @@ defmodule Justify.Validators.Inclusion do
     if value == nil || value == "" || value in enum do
       dataset
     else
-      Justify.add_error(dataset, field, message, validation: :inclusion)
+      Justify.add_error(dataset, field, message, validation: :inclusion, enum: enum)
     end
   end
 end
