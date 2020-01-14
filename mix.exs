@@ -5,7 +5,7 @@ defmodule Justify.MixProject do
     [
       app: :justify,
       description: "Data validation for Elixir",
-      version: "1.0.5",
+      version: "1.1.0",
       elixir: "~> 1.3",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -31,7 +31,7 @@ defmodule Justify.MixProject do
       maintainers: ["Anthony Smith"],
       licenses: ["MIT"],
       links: %{
-        GitHub: "https://github.com/sticksnleaves/justify"
+        GitHub: "https://github.com/malomohq/justify"
       }
     }
   end
