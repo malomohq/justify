@@ -10,7 +10,7 @@ defmodule Justify.Validators.Format do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    if value == nil || value =~ format do
+    if value == nil || value == "" || value =~ format do
       dataset
     else
       Justify.add_error(dataset, field, message, validation: :format)

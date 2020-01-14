@@ -323,7 +323,21 @@ defmodule JustifyTest do
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_format(data, field, ~r/#{value}/)
+             } = Justify.validate_format(data, field, ~r/\d/)
+    end
+
+    test "do not add an error if value is a blank string" do
+      field = :field
+
+      value = ""
+
+      data = Map.new([{ field, value }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format(data, field, ~r/\d/)
     end
   end
 
@@ -372,6 +386,18 @@ defmodule JustifyTest do
       field = :field
 
       data = Map.new([{ field, nil }])
+
+      assert %Justify.Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_inclusion(data, field, ["a value"])
+    end
+
+    test "does not add an error if value is an empty string" do
+      field = :field
+
+      data = Map.new([{ field, "" }])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -622,7 +648,7 @@ defmodule JustifyTest do
              } = Justify.validate_length(data, field, max: count)
     end
 
-    test "does not add an error if value is `nil`" do
+    test "does not add an error if value is nil" do
       field = :field
 
       data = Map.new([{ field, nil }])

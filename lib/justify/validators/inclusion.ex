@@ -10,7 +10,7 @@ defmodule Justify.Validators.Inclusion do
 
     message = Keyword.get(opts, :message, @default_message)
 
-    if value == nil || value in enum do
+    if value == nil || value == "" || value in enum do
       dataset
     else
       Justify.add_error(dataset, field, message, validation: :inclusion)
