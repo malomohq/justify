@@ -204,7 +204,8 @@ defmodule Justify do
     as: :call
 
   @doc """
-  Validates that one or more fields has a value.
+  Validates that one or more fields is not empty. This means they are neither
+  the empty string `""` nor they are `nil`.
 
   ## Options
 

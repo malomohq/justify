@@ -1,6 +1,8 @@
 defmodule JustifyTest do
   use ExUnit.Case, async: true
 
+  doctest Justify
+
   describe "add_error/4" do
     test "adds an error to the dataset" do
       field = :field
