@@ -61,6 +61,10 @@ defmodule Justify.Validators.Length do
     check(:list, length(value), opts)
   end
 
+  defp validate(_value, _opts) do
+    nil
+  end
+
   defp check(type, len, %{ is: count } = opts) when len != count do
     message = Map.get(opts, :message, get_in(@default_message, [type, :is]))
 
