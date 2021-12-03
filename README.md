@@ -1,6 +1,6 @@
 # Justify
 
-Justify provides the ability to easily validate unstructured data.
+Justify allows you to easily validate unstructured data.
 
 Inspired heavily by [Ecto.Changeset][1], Justify allows you to pipe a plain map
 into a series of validation functions using a simple and familiar API. No
