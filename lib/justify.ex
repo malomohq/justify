@@ -1,19 +1,65 @@
 defmodule Justify do
   @moduledoc """
-  Justify is a data validation library for Elixir.
+  Justify makes it easy to validate unstructured data.
 
-  The primary philosophy behind Justify is that it should be easy to validate
-  data without schemas or types. All of Justify's validation functions will
-  happily accept a plain ol' map.
+  Inspired heavily by [Ecto.Changeset][1], Justify allows you to pipe a plain map
+  into a series of validation functions using a simple and familiar API. No
+  schemas or casting required.
+
+  [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
+
+  ### Example
 
   ```elixir
-  iex> %{email: "madebyanthony"}
-  ...> |> Justify.validate_required(:email)
-  ...> |> Justify.validate_format(:email, ~r/\S+@\S+/)
-  %Justify.Dataset{errors: [email: {"has invalid format", validation: :format}], valid?: false}
+  dataset =
+    %{email: "madebyanthony"}
+    |> Justify.validate_required(:email)
+    |> Justify.validate_format(:email, ~r/\S+@\S+/)
+
+  dataset.errors #=> [email: {"has invalid format", validation: :format}]
+  dataset.valid? #=> false
   ```
 
-  Pretty simple. Not much more to it than that.
+  Each validation function will return a `Justify.Dataset` struct which can be
+  passed into the next function. If a validation error is encountered the dataset
+  will be marked as invalid and an error will be added to the struct.
+
+  ## Custom Validations
+
+  You can provide your own custom validations using the `Justify.add_error/4`
+  function.
+
+  ### Example
+
+  ```elixir
+  defmodule MyValidator do
+    def validate_color(data, field, color) do
+      dataset = Justify.Dataset.new(data)
+
+      value = Map.get(dataset.data, :field)
+
+      if value == color do
+        dataset
+      else
+        Justify.add_error(dataset, field, "wrong color", validation: :color)
+      end
+    end
+  end
+  ```
+
+  Your custom validation can be used as part of a validation pipeline.
+
+  ### Example
+
+  ```elixir
+  dataset =
+    %{color: "brown"}
+    |> Justify.validation_required(:color)
+    |> MyValidator.validate_color(:color, "green")
+
+  dataset.errors #=> [color: {"wrong color", validation: :color}]
+  dataset.valid? #=> false
+  ```
 
   ## Supported Validations
 
@@ -25,6 +71,7 @@ defmodule Justify do
   * [`validate_inclusion/4`](https://hexdocs.pm/justify/Justify.html#validate_inclusion/4)
   * [`validate_length/3`](https://hexdocs.pm/justify/Justify.html#validate_length/3)
   * [`validate_required/3`](https://hexdocs.pm/justify/Justify.html#validate_required/3)
+  * [`validate_type/4`](https://hexdocs.pm/justify/Justify.html#validate_type/4)
   """
 
   @type type_t ::
