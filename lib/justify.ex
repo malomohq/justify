@@ -27,6 +27,14 @@ defmodule Justify do
   * [`validate_required/3`](https://hexdocs.pm/justify/Justify.html#validate_required/3)
   """
 
+  @type type_t ::
+          :boolean
+          | :float
+          | :integer
+          | :non_neg_integer
+          | :pos_integer
+          | :string
+
   @doc """
   Validates the given field has a value of `true`.
 
@@ -159,6 +167,27 @@ defmodule Justify do
   @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
   defdelegate validate_required(dataset, fields, opts \\ []),
     to: Justify.Validators.Required,
+    as: :call
+
+  @doc """
+  Validates that the value of a field is a specific type.
+
+  Supported types:
+
+  * `:boolean`
+  * `:float`
+  * `:integer`
+  * `:non_neg_integer`
+  * `:pos_integer`
+  * `:string`
+
+  ## Options
+
+  * `:message` - error message, defaults to "has invalid type"
+  """
+  @spec validate_type(map, atom, type_t, Keyword.t()) :: Justify.Dataset.t()
+  defdelegate validate_type(dataset, field, type, opts \\ []),
+    to: Justify.Validators.Type,
     as: :call
 
   @doc """
