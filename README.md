@@ -47,7 +47,7 @@ defmodule MyValidator do
 end
 ```
 
-You can use your custom validation as part of a validation pipeline.
+Your custom validation can be used as part of a validation pipeline.
 
 ### Example
 
