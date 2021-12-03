@@ -427,7 +427,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} character(s)", count: count, kind: :is, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be %{count} character(s)", count: ^count, kind: :is, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, is: count)
     end
@@ -443,7 +443,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} character(s)", count: count, kind: :min, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be at least %{count} character(s)", count: ^count, kind: :min, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, min: count)
     end
@@ -459,7 +459,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} character(s)", count: count, kind: :max, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be at most %{count} character(s)", count: ^count, kind: :max, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, max: count)
     end
@@ -475,7 +475,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} character(s)", count: count, kind: :is, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be %{count} character(s)", count: ^count, kind: :is, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, is: count)
     end
@@ -491,7 +491,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} character(s)", count: count, kind: :min, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be at least %{count} character(s)", count: ^count, kind: :min, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, min: count)
     end
@@ -507,7 +507,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} character(s)", count: count, kind: :max, type: :string, validation: :length } }],
+               errors: [{ ^field, { "should be at most %{count} character(s)", count: ^count, kind: :max, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, max: count)
     end
@@ -523,7 +523,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} byte(s)", count: count, kind: :is, type: :binary, validation: :length } }],
+               errors: [{ ^field, { "should be %{count} byte(s)", count: ^count, kind: :is, type: :binary, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, is: count)
     end
@@ -539,7 +539,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} byte(s)", count: count, kind: :min, type: :binary, validation: :length } }],
+               errors: [{ ^field, { "should be at least %{count} byte(s)", count: ^count, kind: :min, type: :binary, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, min: count)
     end
@@ -555,7 +555,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} byte(s)", count: count, kind: :max, type: :binary, validation: :length } }],
+               errors: [{ ^field, { "should be at most %{count} byte(s)", count: ^count, kind: :max, type: :binary, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, max: count)
     end
@@ -571,7 +571,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have %{count} item(s)", count: count, kind: :is, type: :list, validation: :length } }],
+               errors: [{ ^field, { "should have %{count} item(s)", count: ^count, kind: :is, type: :list, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, is: count)
     end
@@ -587,7 +587,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have at least %{count} item(s)", count: count, kind: :min, type: :list, validation: :length } }],
+               errors: [{ ^field, { "should have at least %{count} item(s)", count: ^count, kind: :min, type: :list, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, min: count)
     end
@@ -603,7 +603,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have at most %{count} item(s)", count: count, kind: :max, type: :list, validation: :length } }],
+               errors: [{ ^field, { "should have at most %{count} item(s)", count: ^count, kind: :max, type: :list, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, max: count)
     end
@@ -693,7 +693,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, count: count, kind: :is, type: :string, validation: :length } }],
+               errors: [{ ^field, { ^message, count: ^count, kind: :is, type: :string, validation: :length } }],
                valid?: false
              } = Justify.validate_length(data, field, is: count, message: message)
     end
