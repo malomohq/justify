@@ -1,18 +1,6 @@
 defmodule JustifyTest do
   use ExUnit.Case, async: true
 
-  describe "add_error/4" do
-    test "adds an error to the dataset" do
-      field = :field
-      message = "message"
-      keys = [key: "value"]
-
-      dataset = Justify.add_error(%Justify.Dataset{}, field, message, keys)
-
-      assert %Justify.Dataset{ errors: [{ ^field, { ^message, ^keys } }], valid?: false } = dataset
-    end
-  end
-
   describe "validate_acceptance/3" do
     test "adds an error if value is not `true`" do
       field = :field

@@ -1,6 +1,16 @@
 defmodule Justify.DatasetTest do
   use ExUnit.Case, async: true
 
+  test "add_error/4" do
+    field = :field
+    message = "message"
+    keys = [key: "value"]
+
+    dataset = Justify.Dataset.add_error(Justify.Dataset.new(), field, message, keys)
+
+    assert %Justify.Dataset{ errors: [{ ^field, { ^message, ^keys } }], valid?: false } = dataset
+  end
+
   describe "get_field/3" do
     test "retrieves value from a map" do
       field = :field
