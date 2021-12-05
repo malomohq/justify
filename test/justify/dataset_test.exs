@@ -1,16 +1,42 @@
 defmodule Justify.DatasetTest do
   use ExUnit.Case, async: true
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Dataset, Error }
+
+  test "add_error/2" do
+    data = %{}
+
+    field = :field
+
+    message = "message"
+
+    keys = [key: "value"]
+
+    error = Error.new(:field, "message", key: "value")
+
+    assert %Dataset{
+             data: ^data,
+             errors: [{ ^field, { ^message, ^keys } }],
+             valid?: false
+           } = Dataset.add_error(Dataset.new(data), error)
+  end
 
   test "add_error/4" do
+    data = %{}
+
     field = :field
+
     message = "message"
+
     keys = [key: "value"]
 
     dataset = Dataset.add_error(Dataset.new(), field, message, keys)
 
-    assert %Dataset{ errors: [{ ^field, { ^message, ^keys } }], valid?: false } = dataset
+    assert %Dataset{
+             data: ^data,
+             errors: [{ ^field, { ^message, ^keys } }],
+             valid?: false
+           } = dataset
   end
 
   describe "get_field/3" do

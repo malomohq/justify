@@ -3,6 +3,8 @@ defmodule Justify.Dataset do
   Datasets track validations on unstructured data.
   """
 
+  alias Justify.{ Error }
+
   defstruct data: %{}, errors: [], valid?: true
 
   @type error_t :: { String.t(), Keyword.t() }
@@ -12,6 +14,14 @@ defmodule Justify.Dataset do
                errors: [{ atom, error_t }],
                valid?: boolean
              }
+
+ @doc """
+ Adds an error to the dataset from a `Justify.Error` struct.
+ """
+ @spec add_error(t, Error.t()) :: t
+ def add_error(dataset, error) do
+   add_error(dataset, error.field, error.message, error.opts)
+ end
 
  @doc """
  Adds an error to the dataset.
