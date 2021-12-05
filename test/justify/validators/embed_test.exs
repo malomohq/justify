@@ -3,6 +3,24 @@ defmodule Justify.Validators.EmbedTest do
 
   alias Justify.{ Dataset }
 
+  test "adds an error if an embedded keyword list is invalid" do
+    field = :field
+
+    embed_field = :embed_field
+    message = "message"
+    keys = [validation: :custom]
+
+    data = Map.new([{ field, Keyword.new([{ embed_field, false }]) }])
+
+    fun = fn(_value) -> Dataset.add_error(%Dataset{}, embed_field, message, keys) end
+
+    assert %Dataset{
+             data: ^data,
+             errors: [{ ^field, [{ ^embed_field, { ^message, ^keys } }] }],
+             valid?: false
+           } = Justify.validate_embed(data, field, fun)
+  end
+
   test "adds an error if an embedded map is invalid" do
     field = :field
 

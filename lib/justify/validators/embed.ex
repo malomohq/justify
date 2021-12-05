@@ -16,12 +16,12 @@ defmodule Justify.Validators.Embed do
     end
   end
 
-  #
-  # private
-  #
-
   defp validate(nil, _validator) do
     []
+  end
+
+  defp validate([{ _k, _v } | _t] = value, validator) do
+    do_validator(value, validator)
   end
 
   defp validate([h | t], validator) do
@@ -38,6 +38,10 @@ defmodule Justify.Validators.Embed do
   end
 
   defp validate(value, validator) do
+    do_validator(value, validator)
+  end
+
+  defp do_validator(value, validator) do
     value
     |> validator.()
     |> Map.get(:errors, [])
