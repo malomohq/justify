@@ -12,7 +12,7 @@ defmodule Justify.Validators.Confirmation do
 
     confirmation_field = Keyword.get(opts, :confirmation_field, default_confirmation_field)
 
-    value = Map.get(dataset.data, field)
+    value = Dataset.get_field(dataset, field)
 
     message = Keyword.get(opts, :message, @default_message)
 

@@ -24,7 +24,7 @@ defmodule Justify.Validators.Length do
   def call(dataset, field, opts) do
     dataset = Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field) || ""
+    value = Dataset.get_field(dataset, field) || ""
 
     opts =
       opts

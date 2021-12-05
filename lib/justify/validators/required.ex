@@ -14,8 +14,8 @@ defmodule Justify.Validators.Required do
 
     Enum.reduce(fields, dataset, fn
       (field, acc) ->
-        dataset.data
-        |> Map.get(field)
+        dataset
+        |> Dataset.get_field(field)
         |> maybe_trim_value(Keyword.get(opts, :trim?, true))
         |> case do
              value when value in [nil, ""] ->

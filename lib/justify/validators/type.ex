@@ -17,7 +17,7 @@ defmodule Justify.Validators.Type do
   def call(dataset, field, type, opts \\ []) do
     dataset = Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = Dataset.get_field(dataset, field)
 
     if (value == nil || value == "") do
       dataset

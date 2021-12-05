@@ -8,7 +8,7 @@ defmodule Justify.Validators.Format do
   def call(dataset, field, format, opts \\ []) do
     dataset = Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = Dataset.get_field(dataset, field)
 
     message = Keyword.get(opts, :message, @default_message)
 

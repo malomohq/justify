@@ -6,7 +6,7 @@ defmodule Justify.Validators.Embed do
   def call(dataset, field, validator) do
     dataset = Dataset.new(dataset)
 
-    value = Map.get(dataset.data, field)
+    value = Dataset.get_field(dataset, field)
 
     case validate(value, validator) do
       [] ->
