@@ -1,6 +1,8 @@
 defmodule Justify.Validators.Length do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @default_message %{
     string: %{
       is: "should be %{count} character(s)",
@@ -20,7 +22,7 @@ defmodule Justify.Validators.Length do
   }
 
   def call(dataset, field, opts) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     value = Map.get(dataset.data, field) || ""
 

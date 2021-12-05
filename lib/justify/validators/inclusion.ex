@@ -1,10 +1,12 @@
 defmodule Justify.Validators.Inclusion do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @default_message "is invalid"
 
   def call(dataset, field, enum, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
@@ -13,7 +15,7 @@ defmodule Justify.Validators.Inclusion do
     if value == nil || value == "" || value in enum do
       dataset
     else
-      Justify.add_error(dataset, field, message, validation: :inclusion, enum: enum)
+      Dataset.add_error(dataset, field, message, validation: :inclusion, enum: enum)
     end
   end
 end

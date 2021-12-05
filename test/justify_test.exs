@@ -1,6 +1,8 @@
 defmodule JustifyTest do
   use ExUnit.Case, async: true
 
+  alias Justify.{ Dataset }
+
   describe "validate_acceptance/3" do
     test "adds an error if value is not `true`" do
       field = :field
@@ -137,7 +139,7 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, Map.new([{ embed_field, false }]) }])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn(_value) -> Dataset.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,
@@ -157,7 +159,7 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, [embed_data, embed_data] }])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn(_value) -> Dataset.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,
@@ -193,7 +195,7 @@ defmodule JustifyTest do
 
       data = Map.new([{ field, nil }])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn(_value) -> Dataset.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,

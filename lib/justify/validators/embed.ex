@@ -1,8 +1,10 @@
 defmodule Justify.Validators.Embed do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   def call(dataset, field, validator) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 

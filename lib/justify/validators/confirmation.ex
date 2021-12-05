@@ -1,10 +1,12 @@
 defmodule Justify.Validators.Confirmation do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @default_message "does not match"
 
   def call(dataset, field, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     default_confirmation_field = String.to_atom("#{Atom.to_string(field)}_confirmation")
 
@@ -18,7 +20,7 @@ defmodule Justify.Validators.Confirmation do
       { :ok, ^value } ->
         dataset
       { :ok, _does_not_match } ->
-        Justify.add_error(dataset, field, message, validation: :confirmation)
+        Dataset.add_error(dataset, field, message, validation: :confirmation)
       :error ->
         if Keyword.get(opts, :required?, false) do
           Justify.validate_required(dataset, confirmation_field)

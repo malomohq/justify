@@ -1,10 +1,12 @@
 defmodule Justify.Validators.Acceptance do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @default_message "must be accepted"
 
   def call(dataset, field, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
@@ -14,7 +16,7 @@ defmodule Justify.Validators.Acceptance do
       _valid when value in [true, nil] ->
         dataset
       _otherwise ->
-        Justify.add_error(dataset, field, message, validation: :acceptance)
+        Dataset.add_error(dataset, field, message, validation: :acceptance)
     end
   end
 end

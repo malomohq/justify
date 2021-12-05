@@ -1,6 +1,8 @@
 defmodule Justify.Validators.Type do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @available_types [
     :boolean,
     :float,
@@ -13,7 +15,7 @@ defmodule Justify.Validators.Type do
   @default_message "has invalid type"
 
   def call(dataset, field, type, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     value = Map.get(dataset.data, field)
 
@@ -30,7 +32,7 @@ defmodule Justify.Validators.Type do
     else
       message = Keyword.get(opts, :message, @default_message)
 
-      Justify.add_error(dataset, field, message, validation: :type, type: type)
+      Dataset.add_error(dataset, field, message, validation: :type, type: type)
     end
   end
 

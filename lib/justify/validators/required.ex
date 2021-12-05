@@ -1,10 +1,12 @@
 defmodule Justify.Validators.Required do
   @moduledoc false
 
+  alias Justify.{ Dataset }
+
   @default_message "can't be blank"
 
   def call(dataset, fields, opts \\ []) do
-    dataset = Justify.Dataset.new(dataset)
+    dataset = Dataset.new(dataset)
 
     fields = List.wrap(fields)
 
@@ -17,7 +19,7 @@ defmodule Justify.Validators.Required do
         |> maybe_trim_value(Keyword.get(opts, :trim?, true))
         |> case do
              value when value in [nil, ""] ->
-               Justify.add_error(acc, field, message, validation: :required)
+               Dataset.add_error(acc, field, message, validation: :required)
               _otherwise ->
                 acc
            end
