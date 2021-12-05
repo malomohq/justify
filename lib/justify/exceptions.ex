@@ -14,11 +14,12 @@ defmodule Justify.ValidationError do
 
   defexception [:message]
 
+  @spec message(any, String.t()) :: String.t()
   def message(field, message) do
-    "field #{inspect(field)} failed validation with message " <>
-    "#{inspect(message)}"
+    "#{inspect(field)} failed validation with message #{inspect(message)}"
   end
 
+  @impl true
   def exception(opts) do
     error = Keyword.fetch!(opts, :error)
 
