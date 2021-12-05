@@ -2,6 +2,7 @@ defmodule Justify.Dataset do
   @moduledoc """
   Datasets track validations on unstructured data.
   """
+
   defstruct data: %{}, errors: [], valid?: true
 
   @type error_t :: { String.t(), Keyword.t() }
@@ -18,9 +19,9 @@ defmodule Justify.Dataset do
  An optional keyword list can be used to provide additional contextual
  information about the error.
  """
- @spec add_error(Justify.Dataset.t(), atom, String.t(), Keyword.t()) :: Justify.Dataset.t()
+ @spec add_error(t, atom, String.t(), Keyword.t()) :: t
  def add_error(dataset, field, message, keys \\ []) do
-   put_error(dataset, field, { message, keys })
+   Justify.put_error(dataset, field, { message, keys })
  end
 
   @doc """
@@ -50,7 +51,7 @@ defmodule Justify.Dataset do
   If a dataset is provided it will be returned as-is.
   """
   @spec new(keyword | map | t) :: t
-  def new(%Justify.Dataset{} = dataset) do
+  def new(%__MODULE__{} = dataset) do
     dataset
   end
 
