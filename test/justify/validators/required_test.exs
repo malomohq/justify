@@ -142,15 +142,13 @@ defmodule Justify.Validators.RequiredTest do
     end
 
     test "does not raise an error if value is not nil or only whitespace" do
-      field = :field
-
-      data = Map.new([{ field, "value" }])
+      data = %{ field: "value" }
 
       assert %Dataset{
                data: ^data,
                errors: [],
                valid?: true
-             } = Justify.validate_required!(data, field)
+             } = Justify.validate_required!(data, :field)
     end
 
     test "does not raise an error if value is only whitespace and `:trim?` is `false`" do
@@ -174,9 +172,9 @@ defmodule Justify.Validators.RequiredTest do
     end
 
     test "uses a custom error message when provided" do
-      message = "this is a message"
-
       data = %{ field: "" }
+
+      message = "this is a message"
 
       error = Justify.ValidationError.message(:field, message)
 
