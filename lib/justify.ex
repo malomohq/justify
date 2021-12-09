@@ -212,15 +212,10 @@ defmodule Justify do
     to: Justify.Validators.Acceptance,
     as: :call
 
-  @doc """
-  Validates the given field has a value of `true`.
-
-  Raises a `Justify.ValidationError` exception if validation fails.
-
-  ## Options
-
-  * `:message` - error message, defaults to "must be accepted"
-  """
+    @doc """
+    Similar to `validate_acceptance/3` but raises `Justify.ValidationError` if
+    validation fails.
+    """
   @spec validate_acceptance!(data_t, field_t, keyword) :: Dataset.t() | no_return
   defdelegate validate_acceptance!(data, field, opts \\ []),
     to: Justify.Validators.Acceptance,
@@ -247,6 +242,14 @@ defmodule Justify do
   defdelegate validate_confirmation(data, field, opts \\ []),
     to: Justify.Validators.Confirmation,
     as: :call
+
+  @doc """
+  Similar to `validate_confirmation/3` but raises `Justify.ValidationError` if
+  validation fails.
+  """
+  defdelegate validate_confirmation!(data, field, opts \\ []),
+    to: Justify.Validators.Confirmation,
+    as: :call!
 
   @doc """
   Applies a validator function to a field containing an embedded value.
@@ -349,14 +352,8 @@ defmodule Justify do
     as: :call
 
   @doc """
-  Validates that one or more fields has a value.
-
-  Raises a `Justify.ValidationError` exception if validation fails.
-
-  ## Options
-
-  * `:message` - error message, defaults to "must be accepted"
-  * `:trim?` - remove whitespace before validating, defaults to `true`
+  Similar to `validate_required/3` but raises `Justify.ValidationError` if
+  validation fails.
   """
   @spec validate_required!(data_t, atom | [atom], keyword) :: Dataset.t()
   defdelegate validate_required!(data, fields, opts \\ []),

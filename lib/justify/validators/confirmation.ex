@@ -1,31 +1,35 @@
 defmodule Justify.Validators.Confirmation do
   @moduledoc false
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Dataset, Error, Validators }
 
   @default_message "does not match"
 
   def call(dataset, field, opts \\ []) do
-    dataset = Dataset.new(dataset)
+    Justify.validate(dataset, field, opts, &validator/4)
+  end
 
+  def call!(dataset, field, opts \\ []) do
+    Justify.validate!(dataset, field, opts, &validator/4)
+  end
+
+  def validator(field, value, opts, dataset) do
     default_confirmation_field = String.to_atom("#{Atom.to_string(field)}_confirmation")
 
     confirmation_field = Keyword.get(opts, :confirmation_field, default_confirmation_field)
 
-    value = Dataset.get_field(dataset, field)
-
-    message = Keyword.get(opts, :message, @default_message)
-
-    case Map.fetch(dataset.data, confirmation_field) do
+    case Dataset.fetch_field(dataset, confirmation_field) do
       { :ok, ^value } ->
-        dataset
+        nil
       { :ok, _does_not_match } ->
-        Dataset.add_error(dataset, field, message, validation: :confirmation)
+        Error.new(field, opts[:message] || @default_message, validation: :confirmation)
       :error ->
         if Keyword.get(opts, :required?, false) do
-          Justify.validate_required(dataset, confirmation_field)
+          confirmation_value = Dataset.get_field(dataset, confirmation_field)
+
+          Validators.Required.validator(confirmation_field, confirmation_value, [], dataset)
         else
-          dataset
+          nil
         end
     end
   end
