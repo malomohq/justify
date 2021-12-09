@@ -42,7 +42,7 @@ defmodule Justify.DatasetTest do
 
     test "raises an exception if the provided list contains something other than a Justify.Error struct" do
       message = "expected a Justify.Error struct, got: nil"
-      
+
       assert_raise Justify.BadStructError, message, fn -> Dataset.add_errors(%{}, [nil]) end
     end
   end
@@ -65,37 +65,43 @@ defmodule Justify.DatasetTest do
            } = dataset
   end
 
-  describe "get_field/3" do
+  describe "fetch_field/2" do
     test "retrieves value from a map" do
-      field = :field
+      dataset = Dataset.new(%{ field: "value" })
 
-      value = "value"
-
-      data = Map.new([{ field, value }])
-
-      dataset = Dataset.new(data)
-
-      assert Dataset.get_field(dataset, field) == value
+      assert Dataset.fetch_field(dataset, :field) == { :ok, "value" }
     end
 
     test "retrieves value from a keyword list" do
-      field = :field
+      dataset = Dataset.new([field: "value"])
 
-      value = "value"
+      assert Dataset.fetch_field(dataset, :field) == { :ok, "value" }
+    end
 
-      data = Keyword.new([{ field, value }])
+    test "returns :error if the provided field is not present" do
+      dataset = Dataset.new()
 
-      dataset = Dataset.new(data)
+      assert Dataset.fetch_field(dataset, :field) == :error
+    end
+  end
 
-      assert Dataset.get_field(dataset, field) == value
+  describe "get_field/3" do
+    test "retrieves value from a map" do
+      dataset = Dataset.new(%{ field: "value" })
+
+      assert Dataset.get_field(dataset, :field) == "value"
+    end
+
+    test "retrieves value from a keyword list" do
+      dataset = Dataset.new([field: "value"])
+
+      assert Dataset.get_field(dataset, :field) == "value"
     end
 
     test "returns a default value if provided and the field is not present" do
-      default = "default"
-
       dataset = Dataset.new()
 
-      assert Dataset.get_field(dataset, :field, default) == default
+      assert Dataset.get_field(dataset, :field, "default") == "default"
     end
   end
 
