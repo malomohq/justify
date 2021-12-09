@@ -3,71 +3,109 @@ defmodule Justify.Validators.FormatTest do
 
   alias Justify.{ Dataset }
 
-  test "adds an error if value does not match the provided format" do
-    field = :field
+  describe "Justify.validate_format/4" do
+    test "adds an error if value does not match the provided format" do
+      data = %{ field: "value" }
 
-    data = Map.new([{ field, "value" }])
+      assert %Dataset{
+               data: ^data,
+               errors: [{ :field, { _, validation: :format } }],
+               valid?: false
+             } = Justify.validate_format(data, :field, ~r/\d/)
+    end
 
-    assert %Dataset{
-             data: ^data,
-             errors: [{ ^field, { "has invalid format", validation: :format } }],
-             valid?: false
-           } = Justify.validate_format(data, field, ~r/\d/)
+    test "does not add an error if value does match the provided format" do
+      data = %{ field: "value" }
+
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format(data, :field, ~r/value/)
+    end
+
+    test "does not add an error if value is nil" do
+      data = %{ field: nil }
+
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format(data, :field, ~r/\d/)
+    end
+
+    test "does not add an error if value is a blank string" do
+      data = %{ field: "" }
+
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format(data, :field, ~r/\d/)
+    end
+
+    test "uses a custom error message when provided" do
+      data = %{ field: "value" }
+
+      message = "this is a message"
+
+      assert %Dataset{
+               data: ^data,
+               errors: [{ :field, { ^message, validation: :format } }],
+               valid?: false
+             } = Justify.validate_format(data, :field, ~r/\d/, message: message)
+    end
   end
 
-  test "does not add an error if value does match the provided format" do
-    field = :field
+  describe "Justify.validate_format!/4" do
+    test "raises an error if value does not match the provided format" do
+      data = %{ field: "value" }
 
-    value = "value"
+      assert_raise Justify.ValidationError, fn ->
+        Justify.validate_format!(data, :field, ~r/\d/)
+      end
+    end
 
-    data = Map.new([{ field, value }])
+    test "does not raise an error if value does match the provided format" do
+      data = %{ field: "value" }
 
-    assert %Dataset{
-             data: ^data,
-             errors: [],
-             valid?: true
-           } = Justify.validate_format(data, field, ~r/#{value}/)
-  end
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format!(data, :field, ~r/value/)
+    end
 
-  test "uses a custom error message when provided" do
-    field = :field
+    test "does not raise an error if value is nil" do
+      data = %{ field: nil }
 
-    message = "message"
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format!(data, :field, ~r/\d/)
+    end
 
-    data = Map.new([{ field, "value" }])
+    test "does not raise an error if value is a blank string" do
+      data = %{ field: "" }
 
-    assert %Dataset{
-             data: ^data,
-             errors: [{ ^field, { ^message, validation: :format } }],
-             valid?: false
-           } = Justify.validate_format(data, field, ~r/\d/, message: message)
-  end
+      assert %Dataset{
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_format!(data, :field, ~r/\d/)
+    end
 
-  test "do not add an error if value is nil" do
-    field = :field
+    test "uses a custom error message when provided" do
+      data = %{ field: "value" }
 
-    value = nil
+      message = "this is a message"
 
-    data = Map.new([{ field, value }])
+      error = Justify.ValidationError.message(:field, message)
 
-    assert %Dataset{
-             data: ^data,
-             errors: [],
-             valid?: true
-           } = Justify.validate_format(data, field, ~r/\d/)
-  end
-
-  test "do not add an error if value is a blank string" do
-    field = :field
-
-    value = ""
-
-    data = Map.new([{ field, value }])
-
-    assert %Dataset{
-             data: ^data,
-             errors: [],
-             valid?: true
-           } = Justify.validate_format(data, field, ~r/\d/)
+      assert_raise Justify.ValidationError, error, fn ->
+        Justify.validate_format!(data, :field, ~r/\d/, message: message)
+      end
+    end
   end
 end

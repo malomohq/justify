@@ -1,21 +1,39 @@
 defmodule Justify.Validators.Format do
   @moduledoc false
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Error }
 
   @default_message "has invalid format"
 
   def call(dataset, field, format, opts \\ []) do
-    dataset = Dataset.new(dataset)
+    Justify.validate(dataset, field, opts ++ [format: format], &validator/4)
+  end
 
-    value = Dataset.get_field(dataset, field)
+  def call!(dataset, field, format, opts \\ []) do
+    Justify.validate!(dataset, field, opts ++ [format: format], &validator/4)
+  end
 
-    message = Keyword.get(opts, :message, @default_message)
+  def validator(field, value, opts, _dataset) do
+    format = Keyword.fetch!(opts, :format)
 
-    if value == nil || value == "" || value =~ format do
-      dataset
-    else
-      Dataset.add_error(dataset, field, message, validation: :format)
+    unless skip?(value, format) do
+      Error.new(field, opts[:message] || @default_message, validation: :format)
     end
+  end
+
+  defp skip?(nil, _format) do
+    true
+  end
+
+  defp skip?("", _format) do
+    true
+  end
+
+  defp skip?(value, _format) when not is_binary(value) do
+    true
+  end
+
+  defp skip?(value, format) do
+    value =~ format
   end
 end

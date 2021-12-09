@@ -305,6 +305,15 @@ defmodule Justify do
     as: :call
 
   @doc """
+  Similar to `validate_format/4` but raises `Justify.ValidationError` if
+  validation fails.
+  """
+  @spec validate_format!(data_t, field_t, Regex.t(), keyword) :: Dataset.t()
+  defdelegate validate_format!(data, field, format, opts \\ []),
+    to: Justify.Validators.Format,
+    as: :call!
+
+  @doc """
   Validates the value for the given field is contained within the provided
   enumerable.
 
