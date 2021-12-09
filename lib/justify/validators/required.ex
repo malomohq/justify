@@ -15,7 +15,7 @@ defmodule Justify.Validators.Required do
     Justify.validate!(dataset, fields, opts, &validator/4)
   end
 
-  defp validator(field, value, opts, _dataset) do
+  def validator(field, value, opts, _dataset) do
     value = maybe_trim_value(value, Keyword.get(opts, :trim?, true))
 
     if value in [nil, ""] do
