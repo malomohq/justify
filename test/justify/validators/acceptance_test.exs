@@ -3,8 +3,6 @@ defmodule Justify.Validators.AcceptanceTest do
 
   alias Justify.{ Dataset }
 
-  @default_message "must be accepted"
-
   describe "Justify.validate_acceptance/3" do
     test "adds an error if value is not `true`" do
       field = :field
@@ -13,7 +11,7 @@ defmodule Justify.Validators.AcceptanceTest do
 
       assert %Dataset{
                data: ^data,
-               errors: [{ ^field, { @default_message, validation: :acceptance } }],
+               errors: [{ ^field, { _, validation: :acceptance } }],
                valid?: false
              } = Justify.validate_acceptance(data, field)
     end
@@ -62,9 +60,7 @@ defmodule Justify.Validators.AcceptanceTest do
 
       data = Map.new([{ field, false }])
 
-      error = Justify.ValidationError.message(field, @default_message)
-
-      assert_raise Justify.ValidationError, error, fn ->
+      assert_raise Justify.ValidationError, fn ->
         Justify.validate_acceptance!(data, field)
       end
     end
