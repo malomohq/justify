@@ -12,13 +12,37 @@ defmodule Justify.DatasetTest do
 
     keys = [key: "value"]
 
-    error = Error.new(:field, "message", key: "value")
+    error = Error.new(field, message, keys)
 
     assert %Dataset{
              data: ^data,
              errors: [{ ^field, { ^message, ^keys } }],
              valid?: false
            } = Dataset.add_error(Dataset.new(data), error)
+  end
+
+  describe "add_errors/2" do
+    test "adds a list of Justify.Error structs to a dataset" do
+      data = %{}
+
+      error_1 = Error.new(:field_1, "message 1")
+      error_2 = Error.new(:field_2, "message 2")
+
+      errors = [error_1, error_2]
+
+      expected_error_1 = { error_1.field, { error_1.message, error_1.opts } }
+      expected_error_2 = { error_2.field, { error_2.message, error_2.opts } }
+
+      assert %Dataset{
+               data: ^data,
+               errors: [^expected_error_1, ^expected_error_2],
+               valid?: false
+             } = Dataset.add_errors(Dataset.new(data), errors)
+    end
+
+    test "raises an exception if the provided list contains something other than a Justify.Error struct" do
+      assert_raise Justify.BadStructError, "expected a Justify.Error struct, got: nil", fn -> Dataset.add_errors(%{}, [nil]) end
+    end
   end
 
   test "add_error/4" do
