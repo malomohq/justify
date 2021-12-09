@@ -9,7 +9,7 @@ defmodule Justify.Validators.RequiredTest do
 
       assert %Dataset{
                data: ^data,
-               errors: [{ :field, { "can't be blank", validation: :required } }],
+               errors: [{ :field, { _, validation: :required } }],
                valid?: false
              } = Justify.validate_required(data, :field)
     end
@@ -19,7 +19,7 @@ defmodule Justify.Validators.RequiredTest do
 
       assert %Dataset{
                data: ^data,
-               errors: [{ :field, { "can't be blank", validation: :required } }],
+               errors: [{ :field, { _, validation: :required } }],
                valid?: false
              } = Justify.validate_required(data, :field)
     end
@@ -29,7 +29,7 @@ defmodule Justify.Validators.RequiredTest do
 
       assert %Dataset{
                data: ^data,
-               errors: [{ :field, { "can't be blank", validation: :required } }],
+               errors: [{ :field, { _, validation: :required } }],
                valid?: false
              } = Justify.validate_required(data, :field, trim?: true)
     end
@@ -43,8 +43,8 @@ defmodule Justify.Validators.RequiredTest do
       assert %Dataset{
                data: ^data,
                errors: [
-                 { ^field_1, { "can't be blank", validation: :required } },
-                 { ^field_2, { "can't be blank", validation: :required } }
+                 { ^field_1, { _, validation: :required } },
+                 { ^field_2, { _, validation: :required } }
                 ],
                valid?: false
              } = Justify.validate_required(data, [field_1, field_2])
@@ -59,7 +59,7 @@ defmodule Justify.Validators.RequiredTest do
       assert %Dataset{
                data: ^data,
                errors: [
-                 { ^field_1, { "can't be blank", validation: :required } }
+                 { ^field_1, { _, validation: :required } }
                 ],
                valid?: false
              } = Justify.validate_required(data, [field_1, field_2])
