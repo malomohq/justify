@@ -24,21 +24,6 @@ defmodule Justify.Dataset do
   end
 
   @doc """
-  Adds a list of `Justify.Error` structs to the dataset.
-  """
-  @spec add_errors(t, [Error.t()]) :: t
-  def add_errors(dataset, errors) do
-    Enum.reduce(errors, dataset, fn
-      (%Error{} = error, acc) ->
-        add_error(acc, error)
-      (result, _acc) ->
-        message = "expected a Justify.Error struct, got: #{inspect(result)}"
-
-        raise Justify.BadStructError, message
-    end)
-  end
-
-  @doc """
   Adds an error to the dataset.
 
   An optional keyword list can be used to provide additional contextual
