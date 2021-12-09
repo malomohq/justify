@@ -26,8 +26,8 @@ defmodule Justify do
 
   ## Custom Validations
 
-  You can provide your own custom validations using the `Justify.add_error/4`
-  function.
+  You can provide your own custom validations using the
+  `Justify.Dataset.add_error/4` function.
 
   ### Example
 
@@ -36,12 +36,12 @@ defmodule Justify do
     def validate_color(data, field, color) do
       dataset = Justify.Dataset.new(data)
 
-      value = Map.get(dataset.data, :field)
+      value = Justify.Dataset.get_field(dataset, :field)
 
       if value == color do
         dataset
       else
-        Justify.add_error(dataset, field, "wrong color", validation: :color)
+        Justify.Dataset.add_error(dataset, field, "wrong color", validation: :color)
       end
     end
   end
@@ -74,6 +74,16 @@ defmodule Justify do
   * [`validate_type/4`](https://hexdocs.pm/justify/Justify.html#validate_type/4)
   """
 
+  alias Justify.{ Error, Dataset }
+
+  require Justify.Error
+
+  @type data_t ::
+          keyword | map | Dataset.t()
+
+  @type field_t ::
+          atom | String.t() | [field_t]
+
   @type type_t ::
           :boolean
           | :float
@@ -82,6 +92,114 @@ defmodule Justify do
           | :pos_integer
           | :string
 
+  @type validator_t ::
+          (
+            field_t,
+            value_t,
+            keyword,
+            Dataset.t() -> nil | Error.t() | [Error.t()]
+          )
+
+  @type value_t ::
+          any
+
+  @doc """
+  Validate the given field using a custom validator.
+
+  The provided validator function is expected to return `nil` if the validation
+  was successful or a `Justify.Error` struct if the validation failed.
+
+  ## Example
+
+      dataset =
+        Justify.validate(%{name: "Voldermort"}, :name, fn
+          (field, value, opts, _dataset) ->
+            if value == "Voldermort" do
+              Justify.Error.new(field, "is forbidden", validation: :name)
+            end
+        end)
+
+      dataset.errors #=> [name: {"is forbidden", validation: :name}]
+      dataset.valid? #=> false
+
+  A validator can expect to receive only one field. If a list of fields is
+  provided the validator will be called for each individual field.
+  """
+  @spec validate(data_t, field_t, keyword, validator_t) :: Dataset.t()
+  def validate(data, field, opts \\ [], validator)
+
+  def validate(data, fields, opts, validator) when is_list(fields) do
+    dataset = Dataset.new(data)
+
+    Enum.reduce(fields, dataset, fn
+      (field, acc) ->
+        validate(acc, field, opts, validator)
+    end)
+  end
+
+  def validate(data, field, opts, validator) do
+    dataset = Dataset.new(data)
+
+    value = Dataset.get_field(dataset, field)
+
+    case validator.(field, value, opts, dataset) do
+      nil ->
+        dataset
+      %Dataset{} = result ->
+        result
+      %Error{} = error ->
+        Dataset.add_error(dataset, error)
+      result ->
+        message =
+          "validate/4 expects the provided validator to return nil or " <>
+          "a Justify.Error struct, got: #{inspect(result)}"
+
+        raise Justify.BadStructError, message
+    end
+  end
+
+  @doc """
+  Similar to `validate/4` but raises `Justify.ValidationError` if the provided
+  validator returns a `Justify.Error` struct.
+
+  ## Options
+  * `:raise` - a function to raise an exception other than
+    `Justify.ValidationError`. A `Justify.Error` struct is passed as the only
+    argument.
+  """
+  @spec validate!(data_t, field_t, keyword, validator_t) :: Dataset.t()
+  def validate!(data, field, opts \\ [], validator)
+
+  def validate!(data, fields, opts, validator) when is_list(fields) do
+    dataset = Dataset.new(data)
+
+    Enum.reduce(fields, dataset, fn
+      (field, acc) ->
+        validate!(acc, field, opts, validator)
+    end)
+  end
+
+  def validate!(data, field, opts, validator) do
+    dataset = Dataset.new(data)
+
+    value = Dataset.get_field(dataset, field)
+
+    case validator.(field, value, opts, dataset) do
+      nil ->
+        dataset
+      %Dataset{} = result ->
+        result
+      %Error{} = error ->
+        Error.raise!(error)
+      result ->
+        message =
+          "validate/4 expects the provided validator to return nil or " <>
+          "a Justify.Error struct, got: #{inspect(result)}"
+
+        raise Justify.BadStructError, message
+    end
+  end
+
   @doc """
   Validates the given field has a value of `true`.
 
@@ -89,10 +207,24 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "must be accepted"
   """
-  @spec validate_acceptance(map, atom, Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_acceptance(dataset, field, opts \\ []),
+  @spec validate_acceptance(data_t, field_t, keyword) :: Dataset.t()
+  defdelegate validate_acceptance(data, field, opts \\ []),
     to: Justify.Validators.Acceptance,
     as: :call
+
+  @doc """
+  Validates the given field has a value of `true`.
+
+  Raises a `Justify.ValidationError` exception if validation fails.
+
+  ## Options
+
+  * `:message` - error message, defaults to "must be accepted"
+  """
+  @spec validate_acceptance!(data_t, field_t, keyword) :: Dataset.t() | no_return
+  defdelegate validate_acceptance!(data, field, opts \\ []),
+    to: Justify.Validators.Acceptance,
+    as: :call!
 
   @doc """
   Validates the value of a given field matches it's confirmation field.
@@ -111,8 +243,8 @@ defmodule Justify do
   * `:message` - error message, defaults to "does not match"
   * `:required?` - whether the confirmation field must contain a value
   """
-  @spec validate_confirmation(map, atom, Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_confirmation(dataset, field, opts \\ []),
+  @spec validate_confirmation(data_t, field_t, keyword) :: Dataset.t()
+  defdelegate validate_confirmation(data, field, opts \\ []),
     to: Justify.Validators.Confirmation,
     as: :call
 
@@ -130,8 +262,8 @@ defmodule Justify do
       validate_embed(data, :metadata, validator)
       #> %Justify.Dataset{errors: [metadata: [[key: {"can't be blank", validation: :required}]]], valid?: false}
   """
-  @spec validate_embed(map, atom, fun) :: Justify.Dataset.t()
-  defdelegate validate_embed(dataset, field, validator),
+  @spec validate_embed(data_t, field_t, fun) :: Dataset.t()
+  defdelegate validate_embed(data, field, validator),
     to: Justify.Validators.Embed,
     as: :call
 
@@ -143,8 +275,8 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "is reserved"
   """
-  @spec validate_exclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_exclusion(dataset, field, enum, opts \\ []),
+  @spec validate_exclusion(data_t, field_t, Enum.t(), keyword) :: Dataset.t()
+  defdelegate validate_exclusion(data, field, enum, opts \\ []),
     to: Justify.Validators.Exclusion,
     as: :call
 
@@ -155,8 +287,8 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "has invalid format"
   """
-  @spec validate_format(map, atom, Regex.t(), Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_format(dataset, field, format, opts \\ []),
+  @spec validate_format(data_t, field_t, Regex.t(), keyword) :: Dataset.t()
+  defdelegate validate_format(data, field, format, opts \\ []),
     to: Justify.Validators.Format,
     as: :call
 
@@ -168,8 +300,8 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "is invalid"
   """
-  @spec validate_inclusion(map, atom, Enum.t(), Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_inclusion(dataset, field, enum, opts \\ []),
+  @spec validate_inclusion(data_t, field_t, Enum.t(), keyword) :: Dataset.t()
+  defdelegate validate_inclusion(data, field, enum, opts \\ []),
     to: Justify.Validators.Inclusion,
     as: :call
 
@@ -198,8 +330,8 @@ defmodule Justify do
       * “should have at least %{count} item(s)”
       * “should have at most %{count} item(s)”
   """
-  @spec validate_length(map, atom, Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_length(dataset, field, opts),
+  @spec validate_length(data_t, field_t, keyword) :: Dataset.t()
+  defdelegate validate_length(data, field, opts),
     to: Justify.Validators.Length,
     as: :call
 
@@ -211,8 +343,8 @@ defmodule Justify do
   * `:message` - error message, defaults to "must be accepted"
   * `:trim?` - remove whitespace before validating, defaults to `true`
   """
-  @spec validate_required(map, atom | [atom], Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_required(dataset, fields, opts \\ []),
+  @spec validate_required(data_t, atom | [atom], keyword) :: Dataset.t()
+  defdelegate validate_required(data, fields, opts \\ []),
     to: Justify.Validators.Required,
     as: :call
 
@@ -232,8 +364,8 @@ defmodule Justify do
 
   * `:message` - error message, defaults to "has invalid type"
   """
-  @spec validate_type(map, atom, type_t, Keyword.t()) :: Justify.Dataset.t()
-  defdelegate validate_type(dataset, field, type, opts \\ []),
+  @spec validate_type(data_t, field_t, type_t, keyword) :: Dataset.t()
+  defdelegate validate_type(data, field, type, opts \\ []),
     to: Justify.Validators.Type,
     as: :call
 
