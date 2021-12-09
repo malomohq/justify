@@ -41,7 +41,9 @@ defmodule Justify.DatasetTest do
     end
 
     test "raises an exception if the provided list contains something other than a Justify.Error struct" do
-      assert_raise Justify.BadStructError, "expected a Justify.Error struct, got: nil", fn -> Dataset.add_errors(%{}, [nil]) end
+      message = "expected a Justify.Error struct, got: nil"
+      
+      assert_raise Justify.BadStructError, message, fn -> Dataset.add_errors(%{}, [nil]) end
     end
   end
 
