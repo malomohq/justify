@@ -1,22 +1,21 @@
 defmodule Justify.Validators.Acceptance do
   @moduledoc false
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Error }
 
   @default_message "must be accepted"
 
-  def call(dataset, field, opts \\ []) do
-    dataset = Dataset.new(dataset)
+  def call(data, field, opts \\ []) do
+    Justify.validate(data, field, opts, &validator/4)
+  end
 
-    value = Dataset.get_field(dataset, field)
+  def call!(data, field, opts \\ []) do
+    Justify.validate!(data, field, opts, &validator/4)
+  end
 
-    message = Keyword.get(opts, :message, @default_message)
-
-    case value do
-      _valid when value in [true, nil] ->
-        dataset
-      _otherwise ->
-        Dataset.add_error(dataset, field, message, validation: :acceptance)
+  defp validator(field, value, opts, _dataset) do
+    if value not in [true, nil] do
+      Error.new(field, opts[:message] || @default_message, validation: :acceptance)
     end
   end
 end
