@@ -1,34 +1,27 @@
 defmodule Justify.Validators.Required do
   @moduledoc false
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Error }
+
+  require Justify.Error
 
   @default_message "can't be blank"
 
   def call(dataset, fields, opts \\ []) do
-    dataset = Dataset.new(dataset)
-
-    fields = List.wrap(fields)
-
-    message = Keyword.get(opts, :message, @default_message)
-
-    Enum.reduce(fields, dataset, fn
-      (field, acc) ->
-        dataset
-        |> Dataset.get_field(field)
-        |> maybe_trim_value(Keyword.get(opts, :trim?, true))
-        |> case do
-             value when value in [nil, ""] ->
-               Dataset.add_error(acc, field, message, validation: :required)
-              _otherwise ->
-                acc
-           end
-    end)
+    Justify.validate(dataset, fields, opts, &validator/4)
   end
 
-  #
-  # private
-  #
+  def call!(dataset, fields, opts \\ []) do
+    Justify.validate!(dataset, fields, opts, &validator/4)
+  end
+
+  defp validator(field, value, opts, _dataset) do
+    value = maybe_trim_value(value, Keyword.get(opts, :trim?, true))
+
+    if value in [nil, ""] do
+      Error.new(field, opts[:message] || @default_message, validation: :required)
+    end
+  end
 
   defp maybe_trim_value(nil, _does_not_matter) do
     nil

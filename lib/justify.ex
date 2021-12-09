@@ -349,6 +349,21 @@ defmodule Justify do
     as: :call
 
   @doc """
+  Validates that one or more fields has a value.
+
+  Raises a `Justify.ValidationError` exception if validation fails.
+
+  ## Options
+
+  * `:message` - error message, defaults to "must be accepted"
+  * `:trim?` - remove whitespace before validating, defaults to `true`
+  """
+  @spec validate_required!(data_t, atom | [atom], keyword) :: Dataset.t()
+  defdelegate validate_required!(data, fields, opts \\ []),
+    to: Justify.Validators.Required,
+    as: :call!
+
+  @doc """
   Validates that the value of a field is a specific type.
 
   Supported types:
