@@ -62,7 +62,7 @@ defmodule Justify.Validators.ExclusionTest do
       end
     end
 
-    test "does not add an error if the value is not contained within enum" do
+    test "does not raise an error if the value is not contained within enum" do
       data = %{ field: "value" }
 
       assert %Dataset{
@@ -72,7 +72,7 @@ defmodule Justify.Validators.ExclusionTest do
              } = Justify.validate_exclusion!(data, :field, ["another value"])
     end
 
-    test "does not add an error if value is `nil`" do
+    test "does not raise an error if value is `nil`" do
       data = %{ field: nil }
 
       assert %Dataset{
