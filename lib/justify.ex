@@ -284,6 +284,15 @@ defmodule Justify do
     as: :call
 
   @doc """
+  Similar to `validate_exclusion/4` but raises `Justify.ValidationError` if
+  validation fails.
+  """
+  @spec validate_exclusion!(data_t, field_t, Enum.t(), keyword) :: Dataset.t()
+  defdelegate validate_exclusion!(data, field, enum, opts \\ []),
+    to: Justify.Validators.Exclusion,
+    as: :call!
+
+  @doc """
   Validates the value of the given field matches the provided format.
 
   ## Options

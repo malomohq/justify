@@ -1,21 +1,25 @@
 defmodule Justify.Validators.Exclusion do
   @moduledoc false
 
-  alias Justify.{ Dataset }
+  alias Justify.{ Error }
 
   @default_message "is reserved"
 
   def call(dataset, field, enum, opts \\ []) do
-    dataset = Dataset.new(dataset)
+    Justify.validate(dataset, field, opts ++ [enum: enum], &validator/4)
+  end
 
-    value = Dataset.get_field(dataset, field)
+  def call!(dataset, field, enum, opts \\ []) do
+    Justify.validate!(dataset, field, opts ++ [enum: enum], &validator/4)
+  end
 
-    message = Keyword.get(opts, :message, @default_message)
+  def validator(field, value, opts, _dataset) do
+    enum = Keyword.fetch!(opts, :enum)
+
+    message = opts[:message] || @default_message
 
     if value in enum do
-      Dataset.add_error(dataset, field, message, validation: :exclusion, enum: enum)
-    else
-      dataset
+      Error.new(field, message, validation: :exclusion, enum: enum)
     end
   end
 end
