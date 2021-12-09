@@ -1,4 +1,4 @@
-defmodule Justify.Validators.RequestedTest do
+defmodule Justify.Validators.RequiredTest do
   use ExUnit.Case, async: true
 
   alias Justify.{ Dataset }
