@@ -24,3 +24,6 @@ justify-*.tar
 
 # Ignore macOS directory config.
 .DS_Store
+
+# ignore .mix_tasks (used for fast autocomplete on shell)
+.mix_tasks
