@@ -3,8 +3,8 @@
 Justify makes it easy to validate unstructured data.
 
 Inspired heavily by [Ecto.Changeset][1], Justify allows you to pipe a plain map
-into a series of validation functions using a simple and familiar API. No
-schemas or casting required.
+or keyword list into a series of validation functions using a simple and
+familiar API. No schemas or casting required.
 
 [1]: https://hexdocs.pm/ecto/Ecto.Changeset.html
 
@@ -26,8 +26,8 @@ will be marked as invalid and an error will be added to the struct.
 
 ## Custom Validations
 
-You can provide your own custom validations using the `Justify.add_error/4`
-function.
+You can provide your own custom validations using the
+`Justify.Dataset.add_error/4` function.
 
 ### Example
 
@@ -41,7 +41,7 @@ defmodule MyValidator do
     if value == color do
       dataset
     else
-      Justify.add_error(dataset, field, "wrong color", validation: :color)
+      Justify.Dataset.add_error(dataset, field, "wrong color", validation: :color)
     end
   end
 end
