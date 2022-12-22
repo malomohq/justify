@@ -9,7 +9,7 @@ defmodule JustifyTest do
 
       dataset = Justify.add_error(%Justify.Dataset{}, field, message, keys)
 
-      assert %Justify.Dataset{ errors: [{ ^field, { ^message, ^keys } }], valid?: false } = dataset
+      assert %Justify.Dataset{errors: [{^field, {^message, ^keys}}], valid?: false} = dataset
     end
   end
 
@@ -17,11 +17,11 @@ defmodule JustifyTest do
     test "adds an error if value is not `true`" do
       field = :field
 
-      data = Map.new([{ field, false }])
+      data = Map.new([{field, false}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "must be accepted", validation: :acceptance } }],
+               errors: [{^field, {"must be accepted", validation: :acceptance}}],
                valid?: false
              } = Justify.validate_acceptance(data, field)
     end
@@ -29,36 +29,36 @@ defmodule JustifyTest do
     test "does not add an error if value is `true`" do
       field = :field
 
-      data = Map.new([{ field, true }])
+      data = Map.new([{field, true}])
 
       assert %Justify.Dataset{
-                data: ^data,
-                errors: [],
-                valid?: true
-              } = Justify.validate_acceptance(data, field)
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_acceptance(data, field)
     end
 
     test "does not add an error if value is `nil`" do
       field = :field
 
-      data = Map.new([{ field, nil }])
+      data = Map.new([{field, nil}])
 
       assert %Justify.Dataset{
-                data: ^data,
-                errors: [],
-                valid?: true
-              } = Justify.validate_acceptance(data, field)
+               data: ^data,
+               errors: [],
+               valid?: true
+             } = Justify.validate_acceptance(data, field)
     end
 
     test "uses a custom error message when provided" do
       field = :field
       message = "message"
 
-      data = Map.new([{ field, false }])
+      data = Map.new([{field, false}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :acceptance } }],
+               errors: [{^field, {^message, validation: :acceptance}}],
                valid?: false
              } = Justify.validate_acceptance(data, field, message: message)
     end
@@ -70,11 +70,11 @@ defmodule JustifyTest do
 
       confirmation_field = :field_confirmation
 
-      data = Map.new([{ field, "value" }, { confirmation_field, "confirmation_value" }])
+      data = Map.new([{field, "value"}, {confirmation_field, "confirmation_value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "does not match", validation: :confirmation } }],
+               errors: [{^field, {"does not match", validation: :confirmation}}],
                valid?: false
              } = Justify.validate_confirmation(data, field)
     end
@@ -84,11 +84,11 @@ defmodule JustifyTest do
 
       confirmation_field = :field_confirmation
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^confirmation_field, { "can't be blank", validation: :required } }],
+               errors: [{^confirmation_field, {"can't be blank", validation: :required}}],
                valid?: false
              } = Justify.validate_confirmation(data, field, required?: true)
     end
@@ -100,7 +100,7 @@ defmodule JustifyTest do
 
       value = "value"
 
-      data = Map.new([{ field, value }, { confirmation_field, value }])
+      data = Map.new([{field, value}, {confirmation_field, value}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -114,13 +114,14 @@ defmodule JustifyTest do
 
       confirmation_field = :another_confirmation_field
 
-      data = Map.new([{ field, "value" }, { confirmation_field, "confirmation value" }])
+      data = Map.new([{field, "value"}, {confirmation_field, "confirmation value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "does not match", validation: :confirmation } }],
+               errors: [{^field, {"does not match", validation: :confirmation}}],
                valid?: false
-             } = Justify.validate_confirmation(data, field, confirmation_field: confirmation_field)
+             } =
+               Justify.validate_confirmation(data, field, confirmation_field: confirmation_field)
     end
 
     test "uses a custom error message when provided" do
@@ -129,11 +130,11 @@ defmodule JustifyTest do
 
       confirmation_field = :field_confirmation
 
-      data = Map.new([{ field, "value" }, { confirmation_field, "confirmation_value" }])
+      data = Map.new([{field, "value"}, {confirmation_field, "confirmation_value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :confirmation } }],
+               errors: [{^field, {^message, validation: :confirmation}}],
                valid?: false
              } = Justify.validate_confirmation(data, field, message: message)
     end
@@ -147,13 +148,13 @@ defmodule JustifyTest do
       message = "message"
       keys = [validation: :custom]
 
-      data = Map.new([{ field, Map.new([{ embed_field, false }]) }])
+      data = Map.new([{field, Map.new([{embed_field, false}])}])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, [{ ^embed_field, { ^message, ^keys } }] }],
+               errors: [{^field, [{^embed_field, {^message, ^keys}}]}],
                valid?: false
              } = Justify.validate_embed(data, field, fun)
     end
@@ -165,15 +166,18 @@ defmodule JustifyTest do
       message = "message"
       keys = [validation: :custom]
 
-      embed_data = Map.new([{ embed_field, false }])
+      embed_data = Map.new([{embed_field, false}])
 
-      data = Map.new([{ field, [embed_data, embed_data] }])
+      data = Map.new([{field, [embed_data, embed_data]}])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, [[{ ^embed_field, { ^message, ^keys } }], [{ ^embed_field, { ^message, ^keys } }]] }],
+               errors: [
+                 {^field,
+                  [[{^embed_field, {^message, ^keys}}], [{^embed_field, {^message, ^keys}}]]}
+               ],
                valid?: false
              } = Justify.validate_embed(data, field, fun)
     end
@@ -183,11 +187,11 @@ defmodule JustifyTest do
 
       embed_field = :embed_field
 
-      embed_data = Map.new([{ embed_field, true }])
+      embed_data = Map.new([{embed_field, true}])
 
-      data = Map.new([{ field, embed_data }])
+      data = Map.new([{field, embed_data}])
 
-      fun = fn(value) -> value end
+      fun = fn value -> value end
 
       assert %Justify.Dataset{
                data: ^data,
@@ -203,9 +207,9 @@ defmodule JustifyTest do
       message = "message"
       keys = [validation: :custom]
 
-      data = Map.new([{ field, nil }])
+      data = Map.new([{field, nil}])
 
-      fun = fn(_value) -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
+      fun = fn _value -> Justify.add_error(%Justify.Dataset{}, embed_field, message, keys) end
 
       assert %Justify.Dataset{
                data: ^data,
@@ -221,13 +225,13 @@ defmodule JustifyTest do
 
       value = "value"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       enum = [value]
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "is reserved", validation: :exclusion, enum: ^enum } }],
+               errors: [{^field, {"is reserved", validation: :exclusion, enum: ^enum}}],
                valid?: false
              } = Justify.validate_exclusion(data, field, enum)
     end
@@ -235,7 +239,7 @@ defmodule JustifyTest do
     test "does not add an error if the value is not contained within enum" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -251,13 +255,13 @@ defmodule JustifyTest do
 
       message = "message"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       enum = [value]
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :exclusion, enum: ^enum } }],
+               errors: [{^field, {^message, validation: :exclusion, enum: ^enum}}],
                valid?: false
              } = Justify.validate_exclusion(data, field, enum, message: message)
     end
@@ -265,7 +269,7 @@ defmodule JustifyTest do
     test "does not add an error if value is `nil`" do
       field = :field
 
-      data = Map.new([{ field, nil }])
+      data = Map.new([{field, nil}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -279,11 +283,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match the provided format" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid format", validation: :format } }],
+               errors: [{^field, {"has invalid format", validation: :format}}],
                valid?: false
              } = Justify.validate_format(data, field, ~r/\d/)
     end
@@ -293,7 +297,7 @@ defmodule JustifyTest do
 
       value = "value"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -307,11 +311,11 @@ defmodule JustifyTest do
 
       message = "message"
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :format } }],
+               errors: [{^field, {^message, validation: :format}}],
                valid?: false
              } = Justify.validate_format(data, field, ~r/\d/, message: message)
     end
@@ -321,7 +325,7 @@ defmodule JustifyTest do
 
       value = nil
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -335,7 +339,7 @@ defmodule JustifyTest do
 
       value = ""
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -349,13 +353,13 @@ defmodule JustifyTest do
     test "adds an error if value is not contained within enum" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       enum = ["another value"]
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "is invalid", validation: :inclusion, enum: ^enum } }],
+               errors: [{^field, {"is invalid", validation: :inclusion, enum: ^enum}}],
                valid?: false
              } = Justify.validate_inclusion(data, field, enum)
     end
@@ -365,7 +369,7 @@ defmodule JustifyTest do
 
       value = "value"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -379,13 +383,13 @@ defmodule JustifyTest do
 
       message = "message"
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       enum = ["another value"]
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :inclusion, enum: ^enum } }],
+               errors: [{^field, {^message, validation: :inclusion, enum: ^enum}}],
                valid?: false
              } = Justify.validate_inclusion(data, field, enum, message: message)
     end
@@ -393,7 +397,7 @@ defmodule JustifyTest do
     test "does not add an error if value is nil" do
       field = :field
 
-      data = Map.new([{ field, nil }])
+      data = Map.new([{field, nil}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -405,7 +409,7 @@ defmodule JustifyTest do
     test "does not add an error if value is an empty string" do
       field = :field
 
-      data = Map.new([{ field, "" }])
+      data = Map.new([{field, ""}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -421,13 +425,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} character(s)", count: ^count, kind: :is, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be %{count} character(s)",
+                   count: ^count, kind: :is, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, is: count)
     end
@@ -437,13 +445,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} character(s)", count: ^count, kind: :min, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at least %{count} character(s)",
+                   count: ^count, kind: :min, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, min: count)
     end
@@ -453,13 +465,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) - 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} character(s)", count: ^count, kind: :max, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at most %{count} character(s)",
+                   count: ^count, kind: :max, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, max: count)
     end
@@ -469,13 +485,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.codepoints(value)) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} character(s)", count: ^count, kind: :is, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be %{count} character(s)",
+                   count: ^count, kind: :is, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, is: count)
     end
@@ -485,13 +505,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.codepoints(value)) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} character(s)", count: ^count, kind: :min, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at least %{count} character(s)",
+                   count: ^count, kind: :min, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, min: count)
     end
@@ -501,13 +525,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.codepoints(value)) - 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} character(s)", count: ^count, kind: :max, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at most %{count} character(s)",
+                   count: ^count, kind: :max, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :codepoints, max: count)
     end
@@ -517,13 +545,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = byte_size(value) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be %{count} byte(s)", count: ^count, kind: :is, type: :binary, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be %{count} byte(s)",
+                   count: ^count, kind: :is, type: :binary, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, is: count)
     end
@@ -533,13 +565,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = byte_size(value) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at least %{count} byte(s)", count: ^count, kind: :min, type: :binary, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at least %{count} byte(s)",
+                   count: ^count, kind: :min, type: :binary, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, min: count)
     end
@@ -549,13 +585,17 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = byte_size(value) - 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should be at most %{count} byte(s)", count: ^count, kind: :max, type: :binary, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should be at most %{count} byte(s)",
+                   count: ^count, kind: :max, type: :binary, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, count: :bytes, max: count)
     end
@@ -565,13 +605,17 @@ defmodule JustifyTest do
 
       value = ["é"]
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(value) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have %{count} item(s)", count: ^count, kind: :is, type: :list, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should have %{count} item(s)",
+                   count: ^count, kind: :is, type: :list, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, is: count)
     end
@@ -581,13 +625,17 @@ defmodule JustifyTest do
 
       value = ["é"]
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(value) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have at least %{count} item(s)", count: ^count, kind: :min, type: :list, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should have at least %{count} item(s)",
+                   count: ^count, kind: :min, type: :list, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, min: count)
     end
@@ -597,13 +645,17 @@ defmodule JustifyTest do
 
       value = ["é"]
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(value) - 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "should have at most %{count} item(s)", count: ^count, kind: :max, type: :list, validation: :length } }],
+               errors: [
+                 {^field,
+                  {"should have at most %{count} item(s)",
+                   count: ^count, kind: :max, type: :list, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, max: count)
     end
@@ -613,7 +665,7 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value))
 
@@ -629,7 +681,7 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) - 1
 
@@ -645,7 +697,7 @@ defmodule JustifyTest do
 
       value = "é"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) + 1
 
@@ -659,7 +711,7 @@ defmodule JustifyTest do
     test "does not add an error if value is nil" do
       field = :field
 
-      data = Map.new([{ field, nil }])
+      data = Map.new([{field, nil}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -671,7 +723,7 @@ defmodule JustifyTest do
     test "does not add an error if value is an empty string" do
       field = :field
 
-      data = Map.new([{ field, "" }])
+      data = Map.new([{field, ""}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -687,13 +739,16 @@ defmodule JustifyTest do
 
       message = "message"
 
-      data = Map.new([{ field, value }])
+      data = Map.new([{field, value}])
 
       count = length(String.graphemes(value)) + 1
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, count: ^count, kind: :is, type: :string, validation: :length } }],
+               errors: [
+                 {^field,
+                  {^message, count: ^count, kind: :is, type: :string, validation: :length}}
+               ],
                valid?: false
              } = Justify.validate_length(data, field, is: count, message: message)
     end
@@ -707,7 +762,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "can't be blank", validation: :required } }],
+               errors: [{^field, {"can't be blank", validation: :required}}],
                valid?: false
              } = Justify.validate_required(data, field)
     end
@@ -715,11 +770,11 @@ defmodule JustifyTest do
     test "adds an error if value is an empty string" do
       field = :field
 
-      data = Map.new([{ field, "" }])
+      data = Map.new([{field, ""}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "can't be blank", validation: :required } }],
+               errors: [{^field, {"can't be blank", validation: :required}}],
                valid?: false
              } = Justify.validate_required(data, field)
     end
@@ -727,11 +782,11 @@ defmodule JustifyTest do
     test "adds an error if value is only whitespace and `:trim?` is `true`" do
       field = :field
 
-      data = Map.new([{ field, " " }])
+      data = Map.new([{field, " "}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "can't be blank", validation: :required } }],
+               errors: [{^field, {"can't be blank", validation: :required}}],
                valid?: false
              } = Justify.validate_required(data, field, trim?: true)
     end
@@ -745,9 +800,9 @@ defmodule JustifyTest do
       assert %Justify.Dataset{
                data: ^data,
                errors: [
-                 { ^field_a, { "can't be blank", validation: :required } },
-                 { ^field_b, { "can't be blank", validation: :required } }
-                ],
+                 {^field_a, {"can't be blank", validation: :required}},
+                 {^field_b, {"can't be blank", validation: :required}}
+               ],
                valid?: false
              } = Justify.validate_required(data, [field_a, field_b])
     end
@@ -756,13 +811,13 @@ defmodule JustifyTest do
       field_a = :field_a
       field_b = :field_b
 
-      data = Map.new([{ field_a, "" }, { field_b, "hi" }])
+      data = Map.new([{field_a, ""}, {field_b, "hi"}])
 
       assert %Justify.Dataset{
                data: ^data,
                errors: [
-                 { ^field_a, { "can't be blank", validation: :required } }
-                ],
+                 {^field_a, {"can't be blank", validation: :required}}
+               ],
                valid?: false
              } = Justify.validate_required(data, [field_a, field_b])
     end
@@ -770,7 +825,7 @@ defmodule JustifyTest do
     test "does not add an error if value is not nil or only whitespace" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -782,7 +837,7 @@ defmodule JustifyTest do
     test "does not add an error if value is only whitespace and `:trim?` is `false`" do
       field = :field
 
-      data = Map.new([{ field, " " }])
+      data = Map.new([{field, " "}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -794,7 +849,7 @@ defmodule JustifyTest do
     test "does not add an error if value is not a string" do
       field = :field
 
-      data = Map.new([{ field, 1 }])
+      data = Map.new([{field, 1}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -811,7 +866,7 @@ defmodule JustifyTest do
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :required } }],
+               errors: [{^field, {^message, validation: :required}}],
                valid?: false
              } = Justify.validate_required(data, field, message: message)
     end
@@ -821,11 +876,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :boolean" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :boolean } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :boolean}}],
                valid?: false
              } = Justify.validate_type(data, field, :boolean)
     end
@@ -833,11 +888,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :float" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :float } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :float}}],
                valid?: false
              } = Justify.validate_type(data, field, :float)
     end
@@ -845,11 +900,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :integer" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :integer)
     end
@@ -857,11 +912,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :non_neg_integer" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :non_neg_integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :non_neg_integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :non_neg_integer)
     end
@@ -869,11 +924,11 @@ defmodule JustifyTest do
     test "adds an error if value is -1 for type :non_neg_integer" do
       field = :field
 
-      data = Map.new([{ field, -1 }])
+      data = Map.new([{field, -1}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :non_neg_integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :non_neg_integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :non_neg_integer)
     end
@@ -881,11 +936,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :pos_integer" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :pos_integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :pos_integer)
     end
@@ -893,11 +948,11 @@ defmodule JustifyTest do
     test "adds an error if value is 0 for type :pos_integer" do
       field = :field
 
-      data = Map.new([{ field, 0 }])
+      data = Map.new([{field, 0}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :pos_integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :pos_integer)
     end
@@ -905,11 +960,11 @@ defmodule JustifyTest do
     test "adds an error if value is -1 for type :pos_integer" do
       field = :field
 
-      data = Map.new([{ field, -1 }])
+      data = Map.new([{field, -1}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :pos_integer } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :pos_integer}}],
                valid?: false
              } = Justify.validate_type(data, field, :pos_integer)
     end
@@ -917,11 +972,11 @@ defmodule JustifyTest do
     test "adds an error if value does not match type :string" do
       field = :field
 
-      data = Map.new([{ field, 0 }])
+      data = Map.new([{field, 0}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { "has invalid type", validation: :type, type: :string } }],
+               errors: [{^field, {"has invalid type", validation: :type, type: :string}}],
                valid?: false
              } = Justify.validate_type(data, field, :string)
     end
@@ -929,7 +984,7 @@ defmodule JustifyTest do
     test "raises an ArgumentError if type is not recognized" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert_raise ArgumentError, fn -> Justify.validate_type(data, field, :nope) end
     end
@@ -937,7 +992,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :boolean" do
       field = :field
 
-      data = Map.new([{ field, true }])
+      data = Map.new([{field, true}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -949,7 +1004,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :float" do
       field = :field
 
-      data = Map.new([{ field, 1.0 }])
+      data = Map.new([{field, 1.0}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -961,7 +1016,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :integer" do
       field = :field
 
-      data = Map.new([{ field, 1 }])
+      data = Map.new([{field, 1}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -973,7 +1028,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :non_neg_integer" do
       field = :field
 
-      data = Map.new([{ field, 0 }])
+      data = Map.new([{field, 0}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -985,7 +1040,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :pos_integer" do
       field = :field
 
-      data = Map.new([{ field, 1 }])
+      data = Map.new([{field, 1}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -997,7 +1052,7 @@ defmodule JustifyTest do
     test "does not add an error if value matches type :string" do
       field = :field
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
@@ -1010,11 +1065,11 @@ defmodule JustifyTest do
       field = :field
       message = "message"
 
-      data = Map.new([{ field, "value" }])
+      data = Map.new([{field, "value"}])
 
       assert %Justify.Dataset{
                data: ^data,
-               errors: [{ ^field, { ^message, validation: :type, type: :boolean } }],
+               errors: [{^field, {^message, validation: :type, type: :boolean}}],
                valid?: false
              } = Justify.validate_type(data, field, :boolean, message: message)
     end

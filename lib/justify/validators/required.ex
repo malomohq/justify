@@ -11,16 +11,17 @@ defmodule Justify.Validators.Required do
     message = Keyword.get(opts, :message, @default_message)
 
     Enum.reduce(fields, dataset, fn
-      (field, acc) ->
+      field, acc ->
         dataset.data
         |> Map.get(field)
         |> maybe_trim_value(Keyword.get(opts, :trim?, true))
         |> case do
-             value when value in [nil, ""] ->
-               Justify.add_error(acc, field, message, validation: :required)
-              _otherwise ->
-                acc
-           end
+          value when value in [nil, ""] ->
+            Justify.add_error(acc, field, message, validation: :required)
+
+          _otherwise ->
+            acc
+        end
     end)
   end
 
