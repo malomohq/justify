@@ -13,6 +13,7 @@ defmodule Justify.Validators.Acceptance do
     case value do
       _valid when value in [true, nil] ->
         dataset
+
       _otherwise ->
         Justify.add_error(dataset, field, message, validation: :acceptance)
     end

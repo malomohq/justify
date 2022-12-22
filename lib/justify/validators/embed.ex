@@ -9,6 +9,7 @@ defmodule Justify.Validators.Embed do
     case validate(value, validator) do
       [] ->
         dataset
+
       errors ->
         Justify.put_error(dataset, field, errors)
     end
@@ -26,6 +27,7 @@ defmodule Justify.Validators.Embed do
     case validate(h, validator) do
       [] ->
         []
+
       error ->
         [error]
     end ++ validate(t, validator)
