@@ -15,10 +15,12 @@ defmodule Justify.Validators.Confirmation do
     message = Keyword.get(opts, :message, @default_message)
 
     case Map.fetch(dataset.data, confirmation_field) do
-      { :ok, ^value } ->
+      {:ok, ^value} ->
         dataset
-      { :ok, _does_not_match } ->
+
+      {:ok, _does_not_match} ->
         Justify.add_error(dataset, field, message, validation: :confirmation)
+
       :error ->
         if Keyword.get(opts, :required?, false) do
           Justify.validate_required(dataset, confirmation_field)

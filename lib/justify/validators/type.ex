@@ -17,7 +17,7 @@ defmodule Justify.Validators.Type do
 
     value = Map.get(dataset.data, field)
 
-    if (value == nil || value == "") do
+    if value == nil || value == "" do
       dataset
     else
       validate(dataset, field, type, value, opts)
@@ -65,6 +65,6 @@ defmodule Justify.Validators.Type do
       |> Enum.join(", ")
 
     raise ArgumentError,
-      "unknown type #{inspect(type)} given to Justify.validate_type/4.\n\n Available types: #{available_types}"
+          "unknown type #{inspect(type)} given to Justify.validate_type/4.\n\n Available types: #{available_types}"
   end
 end
