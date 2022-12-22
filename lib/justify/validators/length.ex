@@ -63,24 +63,33 @@ defmodule Justify.Validators.Length do
   end
 
   defp check(type, len, %{is: count} = opts) when len != count do
-    message = Map.get(opts, :message, get_in(@default_message, [type, :is]))
+    default_message = default_message([type, :is], count)
+    message = Map.get(opts, :message, default_message)
 
     {message, count: count, kind: :is, type: type, validation: :length}
   end
 
   defp check(type, len, %{min: count} = opts) when len < count do
-    message = Map.get(opts, :message, get_in(@default_message, [type, :min]))
+    default_message = default_message([type, :min], count)
+    message = Map.get(opts, :message, default_message)
 
     {message, count: count, kind: :min, type: type, validation: :length}
   end
 
   defp check(type, len, %{max: count} = opts) when len > count do
-    message = Map.get(opts, :message, get_in(@default_message, [type, :max]))
+    default_message = default_message([type, :max], count)
+    message = Map.get(opts, :message, default_message)
 
     {message, count: count, kind: :max, type: type, validation: :length}
   end
 
   defp check(_type, _len, _opts) do
     nil
+  end
+
+  defp default_message([type, kind], count) do
+    @default_message
+    |> get_in([type, kind])
+    |> String.replace("%{count}", to_string(count))
   end
 end

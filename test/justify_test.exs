@@ -433,7 +433,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be %{count} character(s)",
+                  {"should be 2 character(s)",
                    count: ^count, kind: :is, type: :string, validation: :length}}
                ],
                valid?: false
@@ -453,7 +453,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at least %{count} character(s)",
+                  {"should be at least 2 character(s)",
                    count: ^count, kind: :min, type: :string, validation: :length}}
                ],
                valid?: false
@@ -473,7 +473,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at most %{count} character(s)",
+                  {"should be at most 0 character(s)",
                    count: ^count, kind: :max, type: :string, validation: :length}}
                ],
                valid?: false
@@ -493,7 +493,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be %{count} character(s)",
+                  {"should be 3 character(s)",
                    count: ^count, kind: :is, type: :string, validation: :length}}
                ],
                valid?: false
@@ -513,7 +513,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at least %{count} character(s)",
+                  {"should be at least 3 character(s)",
                    count: ^count, kind: :min, type: :string, validation: :length}}
                ],
                valid?: false
@@ -533,7 +533,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at most %{count} character(s)",
+                  {"should be at most 1 character(s)",
                    count: ^count, kind: :max, type: :string, validation: :length}}
                ],
                valid?: false
@@ -553,7 +553,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be %{count} byte(s)",
+                  {"should be 4 byte(s)",
                    count: ^count, kind: :is, type: :binary, validation: :length}}
                ],
                valid?: false
@@ -573,7 +573,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at least %{count} byte(s)",
+                  {"should be at least 4 byte(s)",
                    count: ^count, kind: :min, type: :binary, validation: :length}}
                ],
                valid?: false
@@ -593,7 +593,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should be at most %{count} byte(s)",
+                  {"should be at most 2 byte(s)",
                    count: ^count, kind: :max, type: :binary, validation: :length}}
                ],
                valid?: false
@@ -613,7 +613,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should have %{count} item(s)",
+                  {"should have 2 item(s)",
                    count: ^count, kind: :is, type: :list, validation: :length}}
                ],
                valid?: false
@@ -633,7 +633,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should have at least %{count} item(s)",
+                  {"should have at least 2 item(s)",
                    count: ^count, kind: :min, type: :list, validation: :length}}
                ],
                valid?: false
@@ -653,7 +653,7 @@ defmodule JustifyTest do
                data: ^data,
                errors: [
                  {^field,
-                  {"should have at most %{count} item(s)",
+                  {"should have at most 0 item(s)",
                    count: ^count, kind: :max, type: :list, validation: :length}}
                ],
                valid?: false
