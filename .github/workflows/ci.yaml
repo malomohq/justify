@@ -9,19 +9,21 @@ jobs:
         steps:
             - uses: actions/checkout@v4.2.1
 
-            - uses: actions/cache@v4.1.1
+            - id: beam
 
-              with:
-                  key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
-
-                  path: _build
-
-            - uses: erlef/setup-beam@v1.18.2
+              uses: erlef/setup-beam@v1.18.2
 
               with:
                   elixir-version: ${{ matrix.elixir }}
 
                   otp-version: ${{ matrix.otp }}
+
+            - uses: actions/cache@v4.1.1
+
+              with:
+                  key: ${{ github.job }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('mix.lock') }}-1
+
+                  path: _build
 
             - run: mix deps.get
 
@@ -59,19 +61,21 @@ jobs:
         steps:
             - uses: actions/checkout@v4.2.1
 
-            - uses: actions/cache@v4.1.1
+            - id: beam
 
-              with:
-                  key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
-
-                  path: _build
-
-            - uses: erlef/setup-beam@v1.18.2
+              uses: erlef/setup-beam@v1.18.2
 
               with:
                   elixir-version: ${{ matrix.elixir }}
 
                   otp-version: ${{ matrix.otp }}
+
+            - uses: actions/cache@v4.1.1
+
+              with:
+                  key: ${{ github.job }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('mix.lock') }}-1
+
+                  path: _build
 
             - run: mix deps.get
 
