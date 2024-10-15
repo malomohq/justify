@@ -3,62 +3,102 @@ name: ci
 on: push
 
 jobs:
-  dialyzer:
-    runs-on: ubuntu-latest
+    dialyzer:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+        steps:
+            - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+            - uses: actions/cache@v2
 
-        with:
-          key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
+              with:
+                  key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
 
-          path: _build
+                  path: _build
 
-      - uses: erlef/setup-elixir@v1
+            - uses: erlef/setup-elixir@v1
 
-        with:
-          elixir-version: ${{ matrix.elixir }}
+              with:
+                  elixir-version: ${{ matrix.elixir }}
 
-          otp-version: ${{ matrix.otp }}
+                  otp-version: ${{ matrix.otp }}
 
-      - run: mix deps.get
+            - run: mix deps.get
 
-      - run: mix dialyzer
+            - run: mix dialyzer
 
-    strategy:
-      matrix:
-        elixir: [1.11.x, 1.12.x, 1.13.x]
+        strategy:
+            matrix:
+                elixir:
+                    - 1.17.x
+                    - 1.16.x
+                    - 1.15.x
 
-        otp: [22.x, 23.x, 24.x]
+                otp:
+                    - 27.x
+                    - 26.x
+                    - 25.x
+                    - 24.x
 
-  test:
-    runs-on: ubuntu-latest
+                exclude:
+                    - elixir: 1.15.x
 
-    steps:
-      - uses: actions/checkout@v2
+                      otp: 27.x
 
-      - uses: actions/cache@v2
+                    - elixir: 1.16.x
 
-        with:
-          key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
+                      otp: 27.x
 
-          path: _build
+                    - elixir: 1.17.x
 
-      - uses: erlef/setup-elixir@v1
+                      otp: 24.x
 
-        with:
-          elixir-version: ${{ matrix.elixir }}
+    test:
+        runs-on: ubuntu-latest
 
-          otp-version: ${{ matrix.otp }}
+        steps:
+            - uses: actions/checkout@v2
 
-      - run: mix deps.get
+            - uses: actions/cache@v2
 
-      - run: mix test
+              with:
+                  key: ${{ github.job }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}-1
 
-    strategy:
-      matrix:
-        elixir: [1.11.x, 1.12.x, 1.13.x]
+                  path: _build
 
-        otp: [22.x, 23.x, 24.x]
+            - uses: erlef/setup-elixir@v1
+
+              with:
+                  elixir-version: ${{ matrix.elixir }}
+
+                  otp-version: ${{ matrix.otp }}
+
+            - run: mix deps.get
+
+            - run: mix test
+
+        strategy:
+            matrix:
+                elixir:
+                    - 1.17.x
+                    - 1.16.x
+                    - 1.15.x
+
+                otp:
+                    - 27.x
+                    - 26.x
+                    - 25.x
+                    - 24.x
+
+                exclude:
+                    - elixir: 1.15.x
+
+                      otp: 27.x
+
+                    - elixir: 1.16.x
+
+                      otp: 27.x
+
+                    - elixir: 1.17.x
+
+                      otp: 24.x
