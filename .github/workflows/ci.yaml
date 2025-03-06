@@ -18,7 +18,7 @@ jobs:
 
                   otp-version: ${{ matrix.otp }}
 
-            - uses: actions/cache@v4.1.1
+            - uses: actions/cache@v4.2.2
 
               with:
                   key: ${{ github.job }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('mix.lock') }}-1
@@ -70,7 +70,7 @@ jobs:
 
                   otp-version: ${{ matrix.otp }}
 
-            - uses: actions/cache@v4.1.1
+            - uses: actions/cache@v4.2.2
 
               with:
                   key: ${{ github.job }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-${{ hashFiles('mix.lock') }}-1
