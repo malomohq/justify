@@ -7,7 +7,7 @@ jobs:
             - uses: actions/checkout@v4.2.2
 
             - id: beam
-              uses: erlef/setup-beam@v1.18.2
+              uses: erlef/setup-beam@v1.19.0
               with:
                   elixir-version: ${{ matrix.elixir }}
                   otp-version: ${{ matrix.otp }}
@@ -55,7 +55,7 @@ jobs:
             - uses: actions/checkout@v4.2.2
 
             - id: beam
-              uses: erlef/setup-beam@v1.18.2
+              uses: erlef/setup-beam@v1.19.0
               with:
                   elixir-version: ${{ matrix.elixir }}
                   otp-version: ${{ matrix.otp }}
